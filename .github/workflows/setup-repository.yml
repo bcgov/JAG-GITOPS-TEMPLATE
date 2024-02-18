@@ -128,8 +128,10 @@ jobs:
         # generated project by cookiecutter. We want to move all the project
         # files into the root directory so we can reinitialize git in the next step
         run: |
+          shopt -s dotglob
           rsync -r ./cookiecutter-temp/* . && \
           rm -rf ./cookiecutter-temp/
+          shopt -u dotglob
 
       - name: Reinitialize git repository
         shell: bash
