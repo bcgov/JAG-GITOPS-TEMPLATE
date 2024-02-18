@@ -26,28 +26,6 @@ on:
         charts_dir:
           description: 'Charts directory'
           required: true
-        deploy_dir:
-          description: 'Deploy directory'
-          required: true
-        chart_name:
-          description: 'Chart name'
-          required: true
-        description:
-          description: 'Description'
-          required: true
-        nginx_version:
-          description: 'NGINX version'
-          required: true
-        postgresql_version:
-          description: 'PostgreSQL version'
-          required: true
-        aspnetcore_version:
-          description: 'ASP.NET Core version'
-          required: true
-        policy_name:
-          description: 'Policy name'
-          required: true
-jobs:
   setup:
     name: Reinitialize repository
     runs-on: ubuntu-latest
