@@ -14,6 +14,9 @@ on:
       project_name:
         description: "Project name"
         required: true
+      repo_name:
+        description: "repo name"
+        required: true
 jobs:
   setup:
     name: Reinitialize repository
@@ -30,7 +33,7 @@ jobs:
           #
           # Generate a new personal access token with the workflow `scope` does the trick.
           # Checkout my blog post https://stefanbuck.com/blog for alternative options
-          token: ${{ env.REPO_SETUP_TOKEN || secrets.GITHUB_TOKEN }}
+          token: ${{ env.REPO_SETUP_TOKEN }}
       - name: Do not run scaffolding on template repository
         shell: bash
         # This workflow runs when the `cookiecutter.json` file is modified.
@@ -60,6 +63,10 @@ jobs:
           ./charts \
           --verbose \
           --no-input \
+          repo_name=${{ github.event.inputs.repo_name }} \
+          app_name=${{ github.event.inputs.app_name }} \
+          licence_plate=${{ github.event.inputs.licence_plate }} \
+          team_name=${{ github.event.inputs.team_name }} \
           --output-dir ./cookiecutter-temp
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -68,6 +75,42 @@ jobs:
           LICENCE_PLATE: ${{ github.event.inputs.licence_plate }}
           TEAM_NAME: ${{ github.event.inputs.team_name }}
           PROJECT_NAME: ${{ github.event.inputs.project_name }}
+
+      - name: Create and Push Application Template
+        run: |
+          cookiecutter \
+          ./application \
+          --verbose \
+          --no-input \
+          repo_name=${{ github.event.inputs.repo_name }} \
+          app_name=${{ github.event.inputs.app_name }} \
+          licence_plate=${{ github.event.inputs.licence_plate }} \
+          team_name=${{ github.event.inputs.team_name }} \
+          --output-dir ./cookiecutter-temp
+
+      - name: Create and Push workflow Template
+        run: |
+          cookiecutter \
+          ./workflow \
+          --verbose \
+          --no-input \
+          repo_name=${{ github.event.inputs.repo_name }} \
+          app_name=${{ github.event.inputs.app_name }} \
+          licence_plate=${{ github.event.inputs.licence_plate }} \
+          team_name=${{ github.event.inputs.team_name }} \
+          --output-dir ./cookiecutter-temp
+
+      - name: Create and Push deploy Template
+        run: |
+          cookiecutter \
+          ./deploy \
+          --verbose \
+          --no-input \
+          repo_name=${{ github.event.inputs.repo_name }} \
+          app_name=${{ github.event.inputs.app_name }} \
+          licence_plate=${{ github.event.inputs.licence_plate }} \
+          team_name=${{ github.event.inputs.team_name }} \
+          --output-dir ./cookiecutter-temp
 
       - name: Prepare root directory
         shell: bash
@@ -85,7 +128,7 @@ jobs:
         # generated project by cookiecutter. We want to move all the project
         # files into the root directory so we can reinitialize git in the next step
         run: |
-          rsync -r ./cookiecutter-temp/*/ . && \
+          rsync -r ./cookiecutter-temp/* . && \
           rm -rf ./cookiecutter-temp/
 
       - name: Reinitialize git repository
