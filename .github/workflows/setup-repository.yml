@@ -58,12 +58,11 @@ jobs:
         shell: /usr/bin/bash -e {0}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COOKIECUTTER_CONFIG: |
-            app_name: ${{ github.event.inputs.app_name }}
-            licence_plate: ${{ github.event.inputs.licence_plate }}
-            team_name: ${{ github.event.inputs.team_name }}
-            project_name: ${{ github.event.inputs.project_name }}
-
+          app_name: ${{ github.event.inputs.app_name }}
+          licence_plate: ${{ github.event.inputs.licence_plate }}
+          team_name: ${{ github.event.inputs.team_name }}
+          project_name: ${{ github.event.inputs.project_name }}
+          
       - name: Prepare root directory
         shell: bash
         # Remove all files and folder exepct .git/ and cookiecutter-temp/
