@@ -1,0 +1,16 @@
+nginx:
+  image:
+    pullPolicy: Always
+  ingress:
+     hostname: nginx-{{cookiecutter.licence_plate}}-prod.apps.emerald.devops.gov.bc.ca
+  podLabels: 
+    environment: prod
+    env: production
+    owner: "{{cookiecutter.team_name}}"
+    project: "{{cookiecutter.project_name}}"
+  commonLabels:
+    environment: prod
+    env: production
+    owner: "{{cookiecutter.team_name}}"
+    project: "{{cookiecutter.project_name}}"
+  replicaCount: 2

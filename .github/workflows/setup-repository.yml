@@ -1,0 +1,148 @@
+name: Setup repository
+on:
+    workflow_dispatch:
+      inputs:
+        repo_name:
+          description: 'Repository name'
+          required: true
+        app_name:
+          description: 'Application name'
+          required: true
+        licence_plate:
+          description: 'License plate'
+          required: true
+        team_name:
+          description: 'Team name'
+          required: true
+        project_name:
+          description: 'Project name'
+          required: true
+        workflow_dir:
+          description: 'Workflow directory'
+          required: true
+        application_dir:
+          description: 'Application directory'
+          required: true
+        charts_dir:
+          description: 'Charts directory'
+          required: true
+        deploy_dir:
+          description: 'Deploy directory'
+          required: true
+        chart_name:
+          description: 'Chart name'
+          required: true
+        description:
+          description: 'Description'
+          required: true
+        nginx_version:
+          description: 'NGINX version'
+          required: true
+        postgresql_version:
+          description: 'PostgreSQL version'
+          required: true
+        aspnetcore_version:
+          description: 'ASP.NET Core version'
+          required: true
+        policy_name:
+          description: 'Policy name'
+          required: true
+jobs:
+  setup:
+    name: Reinitialize repository
+    runs-on: ubuntu-latest
+    env:
+      REPO_SETUP_TOKEN: ${{ secrets.REPO_SETUP_TOKEN }}
+    steps:
+      - name: Do not run scaffolding on template repository
+        shell: bash
+        # This workflow runs when the `cookiecutter.json` file is modified.
+        # This is the trick to re-init a repository, but we don't want to
+        # run this action if this file is modified in the origin template repository.
+        #
+        # Using the GitHub rest API allows us to identify if the current repository
+        # is a template repository or not.
+        run: |
+          curl --silent -X GET \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.baptiste-preview+json" \
+            https://api.github.com/repos/$GITHUB_REPOSITORY \
+            | jq --exit-status '.is_template == false';
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+            python-version: 3.8
+
+      - name: Install Cookiecutter
+        run: pip install cookiecutter
+
+      - name: Create and Push Charts Template
+        run: | 
+            cookiecutter \
+            --verbose \
+            ./charts
+            --output-dir ./cookiecutter-temp \
+            --no-input \
+            --config-file -   # Read from stdin
+
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            COOKIECUTTER_CONFIG: |
+            repo_name: ${{ github.event.inputs.repo_name }}
+            app_name: ${{ github.event.inputs.app_name }}
+            licence_plate: ${{ github.event.inputs.licence_plate }}
+            team_name: ${{ github.event.inputs.team_name }}
+            project_name: ${{ github.event.inputs.project_name }}
+            workflow_dir: ${{ github.event.inputs.workflow_dir }}
+            application_dir: ${{ github.event.inputs.application_dir }}
+            charts_dir: ${{ github.event.inputs.charts_dir }}
+            deploy_dir: ${{ github.event.inputs.deploy_dir }}
+            chart_name: ${{ github.event.inputs.chart_name }}
+            description: ${{ github.event.inputs.description }}
+            nginx_version: ${{ github.event.inputs.nginx_version }}
+            postgresql_version: ${{ github.event.inputs.postgresql_version }}
+            aspnetcore_version: ${{ github.event.inputs.aspnetcore_version }}
+            policy_name: ${{ github.event.inputs.policy_name }}
+
+      - name: Prepare root directory
+        shell: bash
+        # Remove all files and folder exepct .git/ and cookiecutter-temp/
+        run: |
+          find ./ -maxdepth 1 \
+          ! -name '.git' \
+          ! -name 'cookiecutter-temp' \
+          ! -name '.' \
+          ! -exec rm -rf {} +
+
+      - name: Move files to root
+        shell: bash
+        # The cookiecutter-temp/ folder contains a single folder which is the
+        # generated project by cookiecutter. We want to move all the project
+        # files into the root directory so we can reinitialize git in the next step
+        run: |
+          rsync -r ./cookiecutter-temp/*/ . && \
+          rm -rf ./cookiecutter-temp/
+
+      - name: Reinitialize git repository
+        shell: bash
+        # Reinitialize git after scaffolding this repository.
+        # We use `git checkout --orphan` to create a branch in a git init-like state.
+        # By force pushing this as `main` we end up with a new clean git history.
+        run: |
+            git config --global user.email "actions@github.com"
+            git config --global user.name "GitHub Actions"
+            git add .
+            git commit -m "Automated commit: Create Cookiecutter template"
+            git push origin main
+
+      - name: Remove secret REPO_SETUP_TOKEN
+        # After re-initializing the repository, we can remove the `REPO_SETUP_TOKEN` secret.
+        shell: bash
+        if: ${{ env.REPO_SETUP_TOKEN }}
+        run: |
+          curl \
+            -X DELETE --fail \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: token ${{ env.REPO_SETUP_TOKEN }}" \
+            https://api.github.com/repos/$GITHUB_REPOSITORY/actions/secrets/REPO_SETUP_TOKEN
