@@ -53,8 +53,8 @@ jobs:
           ./charts
           --output-dir ./cookiecutter-temp \
           --no-input \
-          --config-file -   # Read from stdin
-          --no-config       # Disable user config loading
+          --config-file - \
+          --no-config
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COOKIECUTTER_CONFIG: |
