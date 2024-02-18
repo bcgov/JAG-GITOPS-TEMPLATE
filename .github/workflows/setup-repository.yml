@@ -143,7 +143,7 @@ jobs:
           git config --global user.name "GitHub Actions"
           git add .
           git commit -m "Automated commit: Create Cookiecutter template"
-          git push origin main
+          git push origin develop
 
       - name: Remove secret REPO_SETUP_TOKEN
         # After re-initializing the repository, we can remove the `REPO_SETUP_TOKEN` secret.
