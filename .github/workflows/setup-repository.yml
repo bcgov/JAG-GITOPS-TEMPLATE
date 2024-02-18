@@ -1,31 +1,19 @@
 name: Setup repository
 on:
-    workflow_dispatch:
-      inputs:
-        repo_name:
-          description: 'Repository name'
-          required: true
-        app_name:
-          description: 'Application name'
-          required: true
-        licence_plate:
-          description: 'License plate'
-          required: true
-        team_name:
-          description: 'Team name'
-          required: true
-        project_name:
-          description: 'Project name'
-          required: true
-        workflow_dir:
-          description: 'Workflow directory'
-          required: true
-        application_dir:
-          description: 'Application directory'
-          required: true
-        charts_dir:
-          description: 'Charts directory'
-          required: true
+  workflow_dispatch:
+    inputs:
+      app_name:
+        description: "Application name"
+        required: true
+      licence_plate:
+        description: "License plate"
+        required: true
+      team_name:
+        description: "Team name"
+        required: true
+      project_name:
+        description: "Project name"
+        required: true
 jobs:
   setup:
     name: Reinitialize repository
@@ -33,6 +21,8 @@ jobs:
     env:
       REPO_SETUP_TOKEN: ${{ secrets.REPO_SETUP_TOKEN }}
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
       - name: Do not run scaffolding on template repository
         shell: bash
         # This workflow runs when the `cookiecutter.json` file is modified.
@@ -51,38 +41,38 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-            python-version: 3.8
+          python-version: 3.8
 
       - name: Install Cookiecutter
         run: pip install cookiecutter
 
       - name: Create and Push Charts Template
-        run: | 
-            cookiecutter \
-            --verbose \
-            ./charts
-            --output-dir ./cookiecutter-temp \
-            --no-input \
-            --config-file -   # Read from stdin
-
+        run: |
+          cookiecutter \
+          --verbose \
+          ./charts
+          --output-dir ./cookiecutter-temp \
+          --no-input \
+          --config-file -   # Read from stdin
+          --no-config       # Disable user config loading
         env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            COOKIECUTTER_CONFIG: |
-            repo_name: ${{ github.event.inputs.repo_name }}
-            app_name: ${{ github.event.inputs.app_name }}
-            licence_plate: ${{ github.event.inputs.licence_plate }}
-            team_name: ${{ github.event.inputs.team_name }}
-            project_name: ${{ github.event.inputs.project_name }}
-            workflow_dir: ${{ github.event.inputs.workflow_dir }}
-            application_dir: ${{ github.event.inputs.application_dir }}
-            charts_dir: ${{ github.event.inputs.charts_dir }}
-            deploy_dir: ${{ github.event.inputs.deploy_dir }}
-            chart_name: ${{ github.event.inputs.chart_name }}
-            description: ${{ github.event.inputs.description }}
-            nginx_version: ${{ github.event.inputs.nginx_version }}
-            postgresql_version: ${{ github.event.inputs.postgresql_version }}
-            aspnetcore_version: ${{ github.event.inputs.aspnetcore_version }}
-            policy_name: ${{ github.event.inputs.policy_name }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COOKIECUTTER_CONFIG: |
+          repo_name: ${{ github.event.inputs.repo_name }}
+          app_name: ${{ github.event.inputs.app_name }}
+          licence_plate: ${{ github.event.inputs.licence_plate }}
+          team_name: ${{ github.event.inputs.team_name }}
+          project_name: ${{ github.event.inputs.project_name }}
+          workflow_dir: ${{ github.event.inputs.workflow_dir }}
+          application_dir: ${{ github.event.inputs.application_dir }}
+          charts_dir: ${{ github.event.inputs.charts_dir }}
+          deploy_dir: ${{ github.event.inputs.deploy_dir }}
+          chart_name: ${{ github.event.inputs.chart_name }}
+          description: ${{ github.event.inputs.description }}
+          nginx_version: ${{ github.event.inputs.nginx_version }}
+          postgresql_version: ${{ github.event.inputs.postgresql_version }}
+          aspnetcore_version: ${{ github.event.inputs.aspnetcore_version }}
+          policy_name: ${{ github.event.inputs.policy_name }}
 
       - name: Prepare root directory
         shell: bash
@@ -109,11 +99,11 @@ jobs:
         # We use `git checkout --orphan` to create a branch in a git init-like state.
         # By force pushing this as `main` we end up with a new clean git history.
         run: |
-            git config --global user.email "actions@github.com"
-            git config --global user.name "GitHub Actions"
-            git add .
-            git commit -m "Automated commit: Create Cookiecutter template"
-            git push origin main
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git add .
+          git commit -m "Automated commit: Create Cookiecutter template"
+          git push origin main
 
       - name: Remove secret REPO_SETUP_TOKEN
         # After re-initializing the repository, we can remove the `REPO_SETUP_TOKEN` secret.
