@@ -55,24 +55,14 @@ jobs:
           --no-input \
           --config-file - \
           --no-config
+        shell: /usr/bin/bash -e {0}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COOKIECUTTER_CONFIG: |
-          repo_name: ${{ github.event.inputs.repo_name }}
-          app_name: ${{ github.event.inputs.app_name }}
-          licence_plate: ${{ github.event.inputs.licence_plate }}
-          team_name: ${{ github.event.inputs.team_name }}
-          project_name: ${{ github.event.inputs.project_name }}
-          workflow_dir: ${{ github.event.inputs.workflow_dir }}
-          application_dir: ${{ github.event.inputs.application_dir }}
-          charts_dir: ${{ github.event.inputs.charts_dir }}
-          deploy_dir: ${{ github.event.inputs.deploy_dir }}
-          chart_name: ${{ github.event.inputs.chart_name }}
-          description: ${{ github.event.inputs.description }}
-          nginx_version: ${{ github.event.inputs.nginx_version }}
-          postgresql_version: ${{ github.event.inputs.postgresql_version }}
-          aspnetcore_version: ${{ github.event.inputs.aspnetcore_version }}
-          policy_name: ${{ github.event.inputs.policy_name }}
+            app_name: ${{ github.event.inputs.app_name }}
+            licence_plate: ${{ github.event.inputs.licence_plate }}
+            team_name: ${{ github.event.inputs.team_name }}
+            project_name: ${{ github.event.inputs.project_name }}
 
       - name: Prepare root directory
         shell: bash
