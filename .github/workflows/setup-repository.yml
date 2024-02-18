@@ -26,6 +26,7 @@ on:
         charts_dir:
           description: 'Charts directory'
           required: true
+jobs:
   setup:
     name: Reinitialize repository
     runs-on: ubuntu-latest
