@@ -155,7 +155,7 @@ jobs:
         uses: infamous-riddles/branch-guardian
         with: 
             PERSONAL-ACCESS-TOKEN: ${{ env.REPO_SETUP_TOKEN }}
-            BASE-BRANCH-PATTERN: '^main\/[a-zA-Z0-9]+$'
+            BASE-BRANCH-PATTERN: '[main]*'
             REQUIRED-NUMBER-OF-REVIEWERS: 2
             REQUIRED-STATUS-CHECKS: 'policy-check'
             REQUIRE-REVIEW-FROM-CODEOWNERS: 'true'
