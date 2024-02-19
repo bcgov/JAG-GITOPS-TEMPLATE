@@ -47,13 +47,13 @@ jobs:
 
           if [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
             echo "This is the main branch"
-            helm datree test --ignore-missing-schemas --policy-config policies.yaml --include-tests ../../charts/{{cookiecutter.app_name}}-gitops -- --namespace {{cookiecutter.licence_plate}}-prod  --values ../../deploy/prod_values.yaml {{cookiecutter.app_name}}-app-prod
+            helm datree test --ignore-missing-schemas --policy-config ../policies.yaml --include-tests ../../charts/{{cookiecutter.app_name}}-gitops -- --namespace {{cookiecutter.licence_plate}}-prod  --values ../../deploy/prod_values.yaml {{cookiecutter.app_name}}-app-prod
           elif [[ "$GITHUB_REF" == "refs/heads/develop" || "$GITHUB_REF" == "refs/heads/gitops" ]]; then
             echo "This is the dev branch"
-            helm datree test --ignore-missing-schemas --policy-config policies.yaml --include-tests ../../charts/{{cookiecutter.app_name}}-gitops -- --namespace {{cookiecutter.licence_plate}}-dev  --values ../../deploy/dev_values.yaml {{cookiecutter.app_name}}-app-dev
+            helm datree test --ignore-missing-schemas --policy-config ../policies.yaml  --include-tests ../../charts/{{cookiecutter.app_name}}-gitops -- --namespace {{cookiecutter.licence_plate}}-dev  --values ../../deploy/dev_values.yaml {{cookiecutter.app_name}}-app-dev
           elif [[ "$GITHUB_REF" == "refs/heads/test" ]]; then
             echo "This is the test branch"
-            helm datree test --ignore-missing-schemas --policy-config policies.yaml --include-tests ../../charts/{{cookiecutter.app_name}}-gitops -- --namespace {{cookiecutter.licence_plate}}-test --values ../../deploy/test_values.yaml {{cookiecutter.app_name}}-app-test
+            helm datree test --ignore-missing-schemas --policy-config ../policies.yaml --include-tests ../../charts/{{cookiecutter.app_name}}-gitops -- --namespace {{cookiecutter.licence_plate}}-test --values ../../deploy/test_values.yaml {{cookiecutter.app_name}}-app-test
           else
             echo "This is another branch"
             # Add commands for other branches here, if needed
