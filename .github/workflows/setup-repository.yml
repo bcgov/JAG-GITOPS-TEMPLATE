@@ -145,6 +145,27 @@ jobs:
           git commit -m "Automated commit: Create Cookiecutter template"
           git push origin develop
 
+          git checkout -b test develop
+          git push origin test
+
+          git checkout -b main develop
+          git push origin main
+
+      - name: Enable Branch Protection
+        uses: infamous-riddles/branch-guardian
+        with: 
+            PERSONAL-ACCESS-TOKEN: ${{ env.REPO_SETUP_TOKEN }}
+            BASE-BRANCH-PATTERN: '^main\/[a-zA-Z0-9]+$'
+            REQUIRED-NUMBER-OF-REVIEWERS: 2
+            REQUIRED-STATUS-CHECKS: 'policy-check'
+            REQUIRE-REVIEW-FROM-CODEOWNERS: 'true'
+            DISMISS-STALE-PR-APPROVALS-ON-NEW-COMMITS: 'true'
+            REQUIRE-LINEAR-HISTORY: 'true'
+            ALLOW-FORCE-PUSHES: 'true'
+            ALLOW-DELETIONS: 'true'
+            INCLUDE-ADMINISTRATORS: 'true'
+            RESTRICTIONS-TEAMS: 'bcgov-c/ag-pssg-emerald'
+
       - name: Remove secret REPO_SETUP_TOKEN
         # After re-initializing the repository, we can remove the `REPO_SETUP_TOKEN` secret.
         shell: bash

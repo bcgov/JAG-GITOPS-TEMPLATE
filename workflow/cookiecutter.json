@@ -14,6 +14,6 @@
     "postgresql_version": "14.1.1",
     "aspnetcore_version": "5.5.0",
 	"workflows": "workflows",
-	"policy_name": "{{ cookiecutter.app_name }}_emerald_policies",
+	"policy_name": "emerald_policies",
 	"policies": "policies"
 }

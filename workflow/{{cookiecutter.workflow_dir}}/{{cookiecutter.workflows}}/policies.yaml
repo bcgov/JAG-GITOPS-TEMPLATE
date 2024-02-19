@@ -1,13 +1,13 @@
 apiVersion: v1
 policies:
-  - name: "{{cookiecutter.policy_name}}"
+  - name: { { cookiecutter.policy_name } }
     isDefault: true
-    rules:       
+    rules:
       - identifier: CUSTOM_WORKLOAD_INCORRECT_DATACLASS_LABELS
         messageOnFailure: "Use only approved dataclass labels (`Low`, `Medium` and `High`)"
       - identifier: CUSTOM_WORKLOAD_INCORRECT_ROUTE_DATACLASS_LABELS
         messageOnFailure: "Use only approved dataclass labels (`dataclass-low`, `dataclass-medium`, `dataclass-high` and `dataclass-public`)"
-      - identifier: CUSTOM_WORKLOAD_INCORRECT_NETWORK_POLICIES 
+      - identifier: CUSTOM_WORKLOAD_INCORRECT_NETWORK_POLICIES
         messageOnFailure: "Ensure Network Policies have distinct and clear source and target rules"
       - identifier: CUSTOM_WORKLOAD_INCORRECT_ENVIRONMENT_LABELS
         messageOnFailure: "Use only approved environment labels (`prod`, `test` and `dev`)"
@@ -24,7 +24,7 @@ policies:
       - identifier: CONTAINERS_MISSING_CPU_REQUEST_KEY
         messageOnFailure: Missing property object `requests.cpu` - value should be within the accepted boundaries recommended by the organization
       - identifier: CRONJOB_INVALID_SCHEDULE_VALUE
-        messageOnFailure: 'Incorrect value for key `schedule` - the (cron) schedule expressions is not valid and therefor, will not work as expected'
+        messageOnFailure: "Incorrect value for key `schedule` - the (cron) schedule expressions is not valid and therefor, will not work as expected"
       - identifier: WORKLOAD_INCORRECT_RESTARTPOLICY_VALUE_ALWAYS
         messageOnFailure: Incorrect value for key `restartPolicy` - any other value than `Always` is not supported by this resource
       - identifier: CONTAINERS_MISSING_CPU_LIMIT_KEY
@@ -82,29 +82,29 @@ customRules:
         properties:
           kind:
             enum:
-            - Deployment
-            - DeploymentConfig
-            - Kafka
-            - Pod
-      then:  
-          properties:
-            spec:
-              properties:
-                template:
-                  properties:                 
-                    metadata:
-                      properties:
-                        labels:
-                          properties:
-                            DataClass:
-                              enum:
-                                - Low
-                                - Medium
-                                - High
-                          required:
-                            - DataClass
-                      required:
-                        - labels
+              - Deployment
+              - DeploymentConfig
+              - Kafka
+              - Pod
+      then:
+        properties:
+          spec:
+            properties:
+              template:
+                properties:
+                  metadata:
+                    properties:
+                      labels:
+                        properties:
+                          DataClass:
+                            enum:
+                              - Low
+                              - Medium
+                              - High
+                        required:
+                          - DataClass
+                    required:
+                      - labels
   - identifier: CUSTOM_WORKLOAD_INCORRECT_ROUTE_DATACLASS_LABELS
     name: Ensure correct data class labels are used for routes [CUSTOM RULE]
     defaultMessageOnFailure: Use only approved dataclass labels (`dataclass-low`, `dataclass-medium`, `dataclass-high` and `dataclass-public`)
@@ -113,27 +113,27 @@ customRules:
         properties:
           kind:
             enum:
-            - Route
-            - Ingress
-      then:  
-          properties:
-            metadata:
-              properties:
-                annotations:
-                  properties:
-                    aviinfrasetting.ako.vmware.com/name:
-                      enum:
-                        - dataclass-low
-                        - dataclass-medium
-                        - dataclass-high
-                        - dataclass-public
-                  required:
-                    - aviinfrasetting.ako.vmware.com/name
-              required:
-                - annotations  
+              - Route
+              - Ingress
+      then:
+        properties:
+          metadata:
+            properties:
+              annotations:
+                properties:
+                  aviinfrasetting.ako.vmware.com/name:
+                    enum:
+                      - dataclass-low
+                      - dataclass-medium
+                      - dataclass-high
+                      - dataclass-public
+                required:
+                  - aviinfrasetting.ako.vmware.com/name
+            required:
+              - annotations
   - identifier: CUSTOM_WORKLOAD_INCORRECT_NETWORK_POLICIES
     name: Ensure Network Policies have distinct PodSelector and egress/ingress either a pod or IP block [CUSTOM RULE]
-    defaultMessageOnFailure: Network Policies must have assigned PodSelector Matchlabel and ingress/egress property must not be empty 
+    defaultMessageOnFailure: Network Policies must have assigned PodSelector Matchlabel and ingress/egress property must not be empty
     schema:
       if:
         properties:
@@ -158,16 +158,16 @@ customRules:
                           - type: object
                             properties:
                               podSelector:
-                                  required:
-                                    - matchLabels
+                                required:
+                                  - matchLabels
                           - type: object
                             properties:
                               ipBlock:
-                                  required:
-                                    - cidr
-                      minItems: 1 
+                                required:
+                                  - cidr
+                      minItems: 1
                   required:
-                     - to
+                    - to
               ingress:
                 type: array
                 items:
@@ -181,17 +181,17 @@ customRules:
                               podSelector:
                                 required:
                                   - matchLabels
-                                  
+
                           - type: object
                             properties:
                               ipBlock:
                                 required:
                                   - cidr
-                      minItems: 1 
+                      minItems: 1
                   required:
-                     - from
+                    - from
             required:
-              - podSelector                
+              - podSelector
   - identifier: CUSTOM_WORKLOAD_INCORRECT_ENVIRONMENT_LABELS
     name: Ensure correct environment labels are used [CUSTOM RULE]
     defaultMessageOnFailure: Use only approved environment labels (`prod`, `dev` and `test`)
@@ -236,7 +236,7 @@ customRules:
                 ^.*$:
                   format: hostname
               additionalProperties: false
-   
+
   - identifier: CUSTOM_REPLICA_COUNT_PROD
     name: Ensure at least 2 replicas for production deployments [CUSTOM RULE]
     defaultMessageOnFailure: Production deployments must have at least 2 replicas
@@ -273,23 +273,22 @@ customRules:
     name: Ensure imagePullPolicy is always set to Always
     defaultMessageOnFailure: Incorrect Value for `imagePullPolicy` - set `imagePullPolicy` to `Always`
     schema:
-        definitions:
-            imagePullPattern:
-                properties:
-                    spec:
-                        properties:
-                            containers:
-                                type: array
-                                items:
-                                    properties:
-                                        imagePullPolicy:
-                                            type: string
-                                            enum:
-                                                - Always
-        allOf:
-            - $ref: '#/definitions/imagePullPattern'
-        additionalProperties:
-            $ref: '#'
-        items:
-            $ref: '#'
-
+      definitions:
+        imagePullPattern:
+          properties:
+            spec:
+              properties:
+                containers:
+                  type: array
+                  items:
+                    properties:
+                      imagePullPolicy:
+                        type: string
+                        enum:
+                          - Always
+      allOf:
+        - $ref: "#/definitions/imagePullPattern"
+      additionalProperties:
+        $ref: "#"
+      items:
+        $ref: "#"
