@@ -29,6 +29,8 @@ nginx:
 
 postgresql:
   enabled: true
+  image:
+    pullPolicy: Always
   commonLabels:
     environment: dev
     env: development

@@ -136,7 +136,8 @@ jobs:
     
       - name: Replace Placeholders
         run: |
-            sed -i "s/\$app/${{ github.event.inputs.app_name }}/g; s/\$namespace/${{ github.event.inputs.licence_plate }}/g; s/\$team/${{ github.event.inputs.team_name }}g" README.md
+            sed -i "s/\$app/${{ github.event.inputs.app_name }}/g; s/\$namespace/${{ github.event.inputs.licence_plate }}/g; s/\$team/${{ github.event.inputs.team_name }}/g" README.md
+
             
 
       - name: Reinitialize git repository
