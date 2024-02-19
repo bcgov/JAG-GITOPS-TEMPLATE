@@ -21,6 +21,6 @@ postgresql:
   version: "{{ cookiecutter.postgresql_version }}"
 
 aspnetcore:
-  enabled: true
+  enabled: false
   chart: "bitnami/aspnetcore"
   version: "{{ cookiecutter.aspnetcore_version }}"

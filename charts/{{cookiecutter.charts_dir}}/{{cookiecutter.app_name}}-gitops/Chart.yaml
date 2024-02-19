@@ -28,7 +28,7 @@ dependencies:
   - name: nginx
     version: "{{ cookiecutter.nginx_version }}"
     repository: "https://charts.bitnami.com/bitnami"
-    condition: postgresql.enabled
+    condition: nginx.enabled
   - name: postgresql
     version: "{{ cookiecutter.postgresql_version }}"
     repository: "https://charts.bitnami.com/bitnami"
@@ -36,4 +36,4 @@ dependencies:
   - name: aspnet-core
     version: "{{ cookiecutter.aspnetcore_version }}"
     repository: "https://charts.bitnami.com/bitnami"
-    condition: postgresql.enabled
+    condition: aspnet-core.enabled
