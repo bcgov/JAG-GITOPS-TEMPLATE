@@ -14,9 +14,6 @@ on:
       project_name:
         description: "Project name"
         required: true
-      repo_name:
-        description: "repo name"
-        required: true
 jobs:
   setup:
     name: Reinitialize repository
@@ -33,7 +30,7 @@ jobs:
             #
             # Generate a new personal access token with the workflow `scope` does the trick.
             # Checkout my blog post https://stefanbuck.com/blog for alternative options
-          token: ${{ env.REPO_SETUP_TOKEN }}
+            token: ${{ env.REPO_SETUP_TOKEN || secrets.GITHUB_TOKEN }}
       - name: Do not run scaffolding on template repository
         shell: bash
         # This workflow runs when the `cookiecutter.json` file is modified.
@@ -63,14 +60,12 @@ jobs:
           ./charts \
           --verbose \
           --no-input \
-          repo_name=${{ github.event.inputs.repo_name }} \
           app_name=${{ github.event.inputs.app_name }} \
           licence_plate=${{ github.event.inputs.licence_plate }} \
           team_name=${{ github.event.inputs.team_name }} \
           --output-dir ./cookiecutter-temp
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO_NAME: ${{ github.event.inputs.repo_name }}
           APP_NAME: ${{ github.event.inputs.app_name }}
           LICENCE_PLATE: ${{ github.event.inputs.licence_plate }}
           TEAM_NAME: ${{ github.event.inputs.team_name }}
@@ -82,7 +77,6 @@ jobs:
           ./application \
           --verbose \
           --no-input \
-          repo_name=${{ github.event.inputs.repo_name }} \
           app_name=${{ github.event.inputs.app_name }} \
           licence_plate=${{ github.event.inputs.licence_plate }} \
           team_name=${{ github.event.inputs.team_name }} \
@@ -94,7 +88,6 @@ jobs:
           ./workflow \
           --verbose \
           --no-input \
-          repo_name=${{ github.event.inputs.repo_name }} \
           app_name=${{ github.event.inputs.app_name }} \
           licence_plate=${{ github.event.inputs.licence_plate }} \
           team_name=${{ github.event.inputs.team_name }} \
@@ -106,7 +99,6 @@ jobs:
           ./deploy \
           --verbose \
           --no-input \
-          repo_name=${{ github.event.inputs.repo_name }} \
           app_name=${{ github.event.inputs.app_name }} \
           licence_plate=${{ github.event.inputs.licence_plate }} \
           team_name=${{ github.event.inputs.team_name }} \
@@ -202,6 +194,21 @@ jobs:
               }'
         env:
           GITHUB_TOKEN: ${{ secrets.REPO_SETUP_TOKEN }}
+        
+      - name: Setup ArgoCD CLI 
+        uses: imajeetyadav/argocd-cli@v1
+        with:
+          version: v2.5.7 # optional
+          
+      - name: Create ArgoCD Application deployment
+        uses: clowdhaus/argo-cd-action/@main
+        env:
+            # Only required for first step in job where API is called
+            # All subsequent setps in a job will not re-download the CLI
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+            command: version
+            options: --client
 
       - name: Remove secret REPO_SETUP_TOKEN
         # After re-initializing the repository, we can remove the `REPO_SETUP_TOKEN` secret.

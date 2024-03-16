@@ -8,7 +8,7 @@ spec:
     namespace: {{cookiecutter.licence_plate}}-dev
     server: 'https://kubernetes.default.svc'
   source:
-    path: charts/{{cookiecutter.app_name}}-gitops
+    path: charts/gitops
     repoURL: 'git@github.com:bcgov-c/tenant-gitops-{{cookiecutter.licence_plate}}.git'
     targetRevision: develop
     helm:

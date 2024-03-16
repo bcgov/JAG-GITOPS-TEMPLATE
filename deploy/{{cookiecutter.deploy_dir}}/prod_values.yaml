@@ -7,8 +7,12 @@ nginx:
     enabled: false
   containerSecurityContext:
     enabled: false
+  networkPolicy:
+    enabled: false
   ingress:
     enabled: true
+    annotations:
+      aviinfrasetting.ako.vmware.com/name: "dataclass-medium"
     hostname: nginx-{{cookiecutter.licence_plate}}-prod.apps.emerald.devops.gov.bc.ca
   version: "{{ cookiecutter.nginx_version }}"
   image:
@@ -42,6 +46,8 @@ postgresql:
       enabled: false
     containerSecurityContext:
       enabled: false
+    networkPolicy:
+      enabled: false
     labels:
       environment: prod
       env: production
@@ -54,4 +60,11 @@ postgresql:
       owner: "{{cookiecutter.team_name}}"
       project: "{{cookiecutter.project_name}}"
       DataClass: "Medium"
+    resources:
+      limits:
+        cpu: 200m
+        memory: 1Gi
+      requests:
+        memory: 256Mi
+        cpu: 100m
   replicaCount: 2
