@@ -34,7 +34,7 @@ dependencies:
     repository: "https://charts.bitnami.com/bitnami"
     condition: postgresql.enabled
   - name: postgresql-ha
-    version: "{{ cookiecutter.postgresql_ha_version }}"
+    version: "{{ cookiecutter.postgresqlha_version }}"
     repository: "https://charts.bitnami.com/bitnami"
     condition: postgresql-ha.enabled
   - name: aspnet-core
