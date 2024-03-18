@@ -83,7 +83,6 @@ postgresql:
 #  this will create postgres database with HA and 2 clusters with backup. for prod change this to 3
 postgresql-ha:
   enabled: true
-  version: "{{ cookiecutter.postgresqlha_version }}"
   backup:
     enabled: true
     image:
