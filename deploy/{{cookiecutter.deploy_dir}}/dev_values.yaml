@@ -1,3 +1,4 @@
+# Base ngnix web server
 nginx:
   enabled: true
   chart: "bitnami/nginx"
@@ -15,6 +16,8 @@ nginx:
       aviinfrasetting.ako.vmware.com/name: "dataclass-medium"
     hostname: nginx-{{cookiecutter.licence_plate}}-dev.apps.emerald.devops.gov.bc.ca
   version: "{{ cookiecutter.nginx_version }}"
+  commonAnnotations:
+    datree.skip/CUSTOM_WORKLOAD_INCORRECT_NETWORK_POLICIES: irrelevant for deployments, skipping.
   image:
     pullPolicy: Always
   podLabels:
@@ -29,17 +32,19 @@ nginx:
     owner: "{{cookiecutter.team_name}}"
     project: "{{cookiecutter.project_name}}"
     DataClass: "Medium"
+    app.kubernetes.io/part-of: "{{cookiecutter.project_name}}"
   replicaCount: 1
   resources:
     limits:
-      cpu: 200m
-      memory: 500Mi
-    requests:
+      cpu: 50m
       memory: 256Mi
-      cpu: 100m
+    requests:
+      memory: 100Mi
+      cpu: 20m
 
+# Normal Postgres DB instance
 postgresql:
-  enabled: true
+  enabled: false
   image:
     pullPolicy: Always
   commonLabels:
@@ -74,3 +79,80 @@ postgresql:
       requests:
         memory: 256Mi
         cpu: 100m
+
+#  this will create postgres database with HA and 2 clusters with backup. for prod change this to 3
+postgresql-ha:
+  enabled: true
+  version: "{{ cookiecutter.postgresqlha_version }}"
+  backup:
+    enabled: true
+    image:
+      pullPolicy: Always
+    cronjob:
+      containerSecurityContext:
+        enabled: false
+      podSecurityContext:
+        enabled: false
+      schedule: "*/5 * * * *"
+      resources:
+        limits:
+          cpu: 50m
+          memory: 256Mi
+        requests:
+          memory: 100Mi
+          cpu: 20m
+      storage:
+        size: 256Mi
+
+  postgresql:
+    image:
+      pullPolicy: Always
+    podSecurityContext:
+      enabled: false
+    persistence:
+      size: 256Mi
+    replicaCount: 2
+    containerSecurityContext:
+      enabled: false
+    resources:
+      limits:
+        cpu: 200m
+        memory: 1Gi
+      requests:
+        memory: 256Mi
+        cpu: 100m
+  pgdumpall:
+    podSecurityContext:
+      enabled: false
+    persistence:
+      size: 256Mi
+    containerSecurityContext:
+      enabled: false
+    resources:
+      limits:
+        cpu: 50m
+        memory: 1Gi
+      requests:
+        memory: 256Mi
+        cpu: 20m
+
+  pgpool:
+    containerSecurityContext:
+      enabled: false
+    image:
+      pullPolicy: Always
+    resources:
+      limits:
+        cpu: 50m
+        memory: 256Mi
+      requests:
+        memory: 100Mi
+        cpu: 20m
+
+  commonLabels:
+    environment: dev
+    env: development
+    owner: "{{cookiecutter.team_name}}"
+    project: "{{cookiecutter.project_name}}"
+    DataClass: "Medium"
+    app.kubernetes.io/part-of: "{{cookiecutter.project_name}}"
