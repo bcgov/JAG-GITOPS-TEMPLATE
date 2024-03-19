@@ -115,11 +115,11 @@ postgresql-ha:
       enabled: false
     resources:
       limits:
-        cpu: 200m
+        cpu: 10m
         memory: 1Gi
       requests:
         memory: 256Mi
-        cpu: 100m
+        cpu: 2m
   pgdumpall:
     podSecurityContext:
       enabled: false
@@ -129,11 +129,11 @@ postgresql-ha:
       enabled: false
     resources:
       limits:
-        cpu: 50m
+        cpu: 20m
         memory: 1Gi
       requests:
         memory: 256Mi
-        cpu: 20m
+        cpu: 5m
 
   pgpool:
     containerSecurityContext:
@@ -142,11 +142,11 @@ postgresql-ha:
       pullPolicy: Always
     resources:
       limits:
-        cpu: 50m
+        cpu: 20m
         memory: 256Mi
       requests:
         memory: 100Mi
-        cpu: 20m
+        cpu: 5m
 
   commonLabels:
     environment: dev
