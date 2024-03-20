@@ -3,6 +3,8 @@
 # service. Make sure you add the appropriate outbound and inbound 
 # rule for your communication. Use the telnet values to make changes
 # if you want to test a new server and port
+
+{{ "{{" }}- if .Values.telnet.enabled {{ "}}" }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
