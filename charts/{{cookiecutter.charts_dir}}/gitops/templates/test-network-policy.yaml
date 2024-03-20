@@ -29,6 +29,10 @@ spec:
             cidr: 142.34.47.201/32 # egress to JUSTIN DB... Add IP address you want to test connectivity to
         - ipBlock:
             cidr: 142.34.229.4/32 # egress to gold
+        - ipBlock:
+            cidr: {{ "{{" }} .Values.telnet.diamEgressIP {{ "}}" }} # DIAM common-sso.
+  
+            
   policyTypes:
     - Egress
 

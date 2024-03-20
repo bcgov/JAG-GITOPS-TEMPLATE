@@ -29,7 +29,7 @@ spec:
         - name: telnet-container
           image: sookeke/alpine-telnet:v1
           imagePullPolicy: Always
-          args: ["sh", "-c", "while true; do telnet {{ "{{" }} .Values.telnet.Server {{ "}}" }} {{ "{{" }} .Values.telnet.Port {{ "}}" }}; sleep 30; done"]
+          args: ["sh", "-c", "while true; do telnet {{ "{{" }} .Values.telnet.goldService {{ "}}" }} {{ "{{" }} .Values.telnet.goldPort {{ "}}" }}; telnet {{ "{{" }} .Values.telnet.diamSSO {{ "}}" }} {{ "{{" }} .Values.telnet.diamPort {{ "}}" }}; curl -v {{ "{{" }} .Values.telnet.publicService {{ "}}" }}; git clone {{ "{{" }} .Values.telnet.gitHubUrl {{ "}}" }}; sleep 45; done"]
           resources:
             limits:
               cpu: "10m"
@@ -37,6 +37,13 @@ spec:
             requests:
               cpu: "2m"
               memory: "20Mi"
+          env:
+            - name: HTTP_PROXY
+              value: "http://swpxkam.gov.bc.ca:8080"
+            - name: HTTPS_PROXY
+              value: "http://swpxkam.gov.bc.ca:8080"
+            - name: NO_PROXY
+              value: .cluster.local,.svc,10.91.0.0/16,172.30.0.0/16,127.0.0.1,localhost,.gov.bc.ca
           livenessProbe:
             exec:
               command:
