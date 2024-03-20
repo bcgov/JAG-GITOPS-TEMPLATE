@@ -153,3 +153,13 @@ postgresql-ha:
     project: "{{cookiecutter.project_name}}"
     DataClass: "Medium"
     app.kubernetes.io/part-of: "{{cookiecutter.project_name}}"
+
+telnet:
+  enabled: true
+  commonLabels:
+    environment: test
+    env: test
+    owner: "{{cookiecutter.team_name}}"
+    project: "{{cookiecutter.project_name}}"
+    DataClass: "Medium"
+    app.kubernetes.io/part-of: "{{cookiecutter.project_name}}"
