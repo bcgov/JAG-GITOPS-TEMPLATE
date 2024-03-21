@@ -223,7 +223,7 @@ jobs:
             -H "Authorization: token ${{ env.REPO_SETUP_TOKEN }}" \
             https://api.github.com/repos/$GITHUB_REPOSITORY/actions/secrets/REPO_SETUP_TOKEN
 
-
+  
   setup-dispatch:
     name: Auto-reinitialize repository
     runs-on: ubuntu-latest
