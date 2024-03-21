@@ -152,6 +152,64 @@ jobs:
           team_name=$(echo "${{ github.event.client_payload.team_name }}" | tr '[:upper:]' '[:lower:]') \
           project_name=$(echo "${{ github.event.client_payload.project_name }}" | tr '[:upper:]' '[:lower:]') \
           --output-dir ./cookiecutter-temp
+    
+      - name: Create and Push RBAC Template
+        run: |
+          cookiecutter \
+          ./rbac \
+          --verbose \
+          --no-input \
+          app_name=$(echo "${{ github.event.client_payload.app_name }}" | tr '[:upper:]' '[:lower:]') \
+          licence_plate=$(echo "${{ github.event.client_payload.licence_plate }}" | tr '[:upper:]' '[:lower:]') \
+          team_name=$(echo "${{ github.event.client_payload.team_name }}" | tr '[:upper:]' '[:lower:]') \
+          project_name=$(echo "${{ github.event.client_payload.project_name }}" | tr '[:upper:]' '[:lower:]') \
+          --output-dir ./cookiecutter-temp
+
+      - name: Checkout Emerald RBAC Template Repo
+        id: rbac
+        uses: actions/checkout@v4
+        with:
+            repository: bcgov-c/ministry-gitops-jag
+            ref: LEA-GITOPS
+            token: ${{ github.event.client_payload.REPO_SETUP_TOKEN }}# `GH_PAT` is a secret that contains your PAT
+            path: rbac_emerald
+    
+      - name: Create RBAC YAML 
+        run: |
+            if [ ! -d "/rbac_emerald/rbac_emerald/${{ github.event.client_payload.licence_plate}}" ]; then
+                mkdir -p rbac_emerald/rbac_emerald/${{ github.event.client_payload.licence_plate}}
+                echo "Folder created"
+                ls -A rbac_emerald/rbac_emerald/
+                # move cookiecuter rbac to this folder
+                mv cookiecutter-temp/${{ github.event.client_payload.licence_plate}} rbac_emerald/rbac_emerald/
+
+                cd rbac_emerald/rbac_emerald/
+
+                git config --global user.email "actions@github.com"
+                git config --global user.name "GitHub Actions"
+
+                git add .
+                
+                git commit -m "Auto Create RBAC"
+                git push origin LEA-GITOPS  # Update the branch name as needed
+
+            else
+                echo "Folder already exists"
+                ls -A rbac_emerald/rbac_emerald/
+                # move cookiecuter rbac to this folder
+                mv cookiecutter-temp/${{ github.event.client_payload.licence_plate}} rbac_emerald/rbac_emerald/
+
+                cd rbac_emerald/rbac_emerald/
+
+                git config --global user.email "actions@github.com"
+                git config --global user.name "GitHub Actions"
+
+                git add .
+                
+                git commit -m "Auto Create RBAC"
+                git push origin LEA-GITOPS  # Update the branch name as needed
+ 
+            fi
 
       - name: Prepare root directory
         shell: bash
@@ -176,10 +234,12 @@ jobs:
           shopt -u dotglob
     
       - name: Replace Placeholders
+        id: placeholder
         run: |
             sed -i "s/\$app/${{ github.event.client_payload.app_name }}/g; s/\$namespace/${{ github.event.client_payload.licence_plate }}/g; s/\$team/${{ github.event.client_payload.team_name }}/g" README.md
 
-            
+           
+
 
       - name: Reinitialize git repository
         shell: bash
