@@ -209,33 +209,28 @@ jobs:
             https://api.github.com/repos/${{ github.repository }}/branches/main/protection \
             -d '{
                 "required_status_checks": {
-                "strict": true,
-                "contexts": ["policy-check"]
+                  "strict": true,
+                  "contexts": ["policy-check"]
                 },
                 "enforce_admins": true,
                 "required_pull_request_reviews": {
-                "dismissal_restrictions": {
-                    "users": ["octocat"],
-                },
-                "dismiss_stale_reviews": true,
-                "require_code_owner_reviews": true,
-                "required_approving_review_count": 2,
-                "require_last_push_approval": true,
-                "bypass_pull_request_allowances": {
-                    "users": ["octocat"],
-                    "teams": ["bcgov-c/ag-pssg-emerald", "ag-pssg-emerald", "ag-pssg-isb"]
-                }
+                  "dismiss_stale_reviews": true,
+                  "require_code_owner_reviews": true,
+                  "required_approving_review_count": 2,
+                  "require_last_push_approval": true,
+                  "bypass_pull_request_allowances": {
+                    "teams": ["ag-pssg-emerald", "ag-pssg-isb"]
+                  }
                 },
                 "restrictions": {
-                "teams": ["bcgov-c/ag-pssg-emerald", "ag-pssg-emerald", "ag-pssg-isb"],
+                  "users": ["ag-pssg-isb-sa"],
+                  "teams": ["ag-pssg-emerald", "ag-pssg-isb"]
                 },
                 "required_linear_history": true,
-                "allow_force_pushes": true,
-                "allow_deletions": true,
                 "block_creations": true,
                 "required_conversation_resolution": true,
                 "lock_branch": true,
                 "allow_fork_syncing": true
-            }'
+              }'
         env:
           GITHUB_TOKEN: ${{ github.event.client_payload.REPO_SETUP_TOKEN }}
