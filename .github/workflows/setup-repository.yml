@@ -225,7 +225,7 @@ jobs:
 
 
   setup-dispatch:
-    name: Reinitialize repository
+    name: Auto-reinitialize repository
     if: ${{ github.event.client_payload.REPO_SETUP_TOKEN != '' }}
     runs-on: ubuntu-latest
     env:
