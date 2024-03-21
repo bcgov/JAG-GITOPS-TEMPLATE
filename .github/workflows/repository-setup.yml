@@ -171,7 +171,7 @@ jobs:
         with:
             repository: bcgov-c/ministry-gitops-jag
             ref: LEA-GITOPS
-            token: ${{ github.event.client_payload.REPO_SETUP_TOKEN }}# `GH_PAT` is a secret that contains your PAT
+            token: ${{ github.event.client_payload.REPO_SETUP_TOKEN }}
             path: rbac_emerald
     
       - name: Create RBAC YAML 
