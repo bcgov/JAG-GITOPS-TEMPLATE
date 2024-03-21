@@ -226,10 +226,9 @@ jobs:
 
   setup-dispatch:
     name: Auto-reinitialize repository
-    if: ${{ github.event.client_payload.REPO_SETUP_TOKEN != '' }}
     runs-on: ubuntu-latest
     env:
-      REPO_SETUP_TOKEN: ${{ github.event.client_payload.REPO_SETUP_TOKEN }}
+      REPO_SETUP_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -240,7 +239,7 @@ jobs:
             #
             # Generate a new personal access token with the workflow `scope` does the trick.
             # Checkout my blog post https://stefanbuck.com/blog for alternative options
-            token: ${{ github.event.client_payload.REPO_SETUP_TOKEN || secrets.GITHUB_TOKEN }}
+            token: ${{ secrets.GITHUB_TOKEN }}
       - name: Do not run scaffolding on template repository
         shell: bash
         # This workflow runs when the `cookiecutter.json` file is modified.
@@ -366,7 +365,7 @@ jobs:
             curl -L \
               -X PUT \
               -H "Accept: application/vnd.github+json" \
-              -H "Authorization: Bearer ${{ github.event.client_payload.REPO_SETUP_TOKEN }}" \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
               -H "X-GitHub-Api-Version: 2022-11-28" \
               https://api.github.com/repos/${{ github.repository }}/branches/main/protection \
               -d '{
@@ -403,7 +402,7 @@ jobs:
                 "allow_fork_syncing": true
               }'
         env:
-          GITHUB_TOKEN: ${{ github.event.client_payload.REPO_SETUP_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
         
       - name: Setup ArgoCD CLI 
         uses: imajeetyadav/argocd-cli@v1
@@ -420,13 +419,4 @@ jobs:
             command: version
             options: --client
 
-      - name: Remove secret REPO_SETUP_TOKEN
-        # After re-initializing the repository, we can remove the `REPO_SETUP_TOKEN` secret.
-        shell: bash
-        if: ${{ github.event.client_payload.REPO_SETUP_TOKEN }}
-        run: |
-          curl \
-            -X DELETE --fail \
-            -H "Accept: application/vnd.github.v3+json" \
-            -H "Authorization: token ${{ env.REPO_SETUP_TOKEN }}" \
-            https://api.github.com/repos/$GITHUB_REPOSITORY/actions/secrets/REPO_SETUP_TOKEN
+
