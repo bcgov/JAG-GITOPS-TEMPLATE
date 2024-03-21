@@ -197,7 +197,7 @@ jobs:
                 echo "Folder already exists"
                 ls -A rbac_emerald/rbac_emerald/
                 # move cookiecuter rbac to this folder
-                mv cookiecutter-temp/${{ github.event.client_payload.licence_plate}} rbac_emerald/rbac_emerald/
+                rsync -av cookiecutter-temp/${{ github.event.client_payload.licence_plate}} rbac_emerald/rbac_emerald/
 
                 cd rbac_emerald/rbac_emerald/
 
