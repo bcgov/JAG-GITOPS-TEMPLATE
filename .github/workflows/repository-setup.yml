@@ -164,7 +164,7 @@ jobs:
                   "require_last_push_approval": true,
                   "bypass_pull_request_allowances": {
                     "users": ["octocat"],
-                    "teams": ["bcgov-c/ag-pssg-emerald"]
+                    "teams": ["bcgov-c/ag-pssg-emerald", "ag-pssg-emerald", "ag-pssg-emerald", "ag-pssg-diam"]
                   }
                 },
                 "restrictions": {
