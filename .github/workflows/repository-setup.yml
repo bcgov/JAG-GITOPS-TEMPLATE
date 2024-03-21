@@ -181,7 +181,7 @@ jobs:
                 echo "Folder created"
                 ls -A rbac_emerald/rbac_emerald/
                 # move cookiecuter rbac to this folder
-                mv cookiecutter-temp/${{ github.event.client_payload.licence_plate}} rbac_emerald/rbac_emerald/
+                rsync -av cookiecutter-temp/${{ github.event.client_payload.licence_plate}} rbac_emerald/rbac_emerald/
 
                 cd rbac_emerald/rbac_emerald/
 
@@ -190,14 +190,14 @@ jobs:
 
                 git add .
                 
-                git commit -m "Auto Create RBAC"
+                git diff --exit-code || git commit -m "Auto Create RBAC"
                 git push origin LEA-GITOPS  # Update the branch name as needed
 
             else
                 echo "Folder already exists"
                 ls -A rbac_emerald/rbac_emerald/
                 # move cookiecuter rbac to this folder
-                rsync -av cookiecutter-temp/${{ github.event.client_payload.licence_plate}} rbac_emerald/rbac_emerald/
+                mv cookiecutter-temp/${{ github.event.client_payload.licence_plate}} rbac_emerald/rbac_emerald/
 
                 cd rbac_emerald/rbac_emerald/
 
