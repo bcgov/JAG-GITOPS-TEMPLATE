@@ -62,3 +62,9 @@ aspnet-core:
   enabled: false
   chart: "bitnami/aspnetcore"
   version: "{{ cookiecutter.aspnetcore_version }}"
+
+telnet:
+  enabled: false
+
+react-baseapp:
+  enabled: false

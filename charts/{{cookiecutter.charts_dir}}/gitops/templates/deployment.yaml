@@ -44,20 +44,26 @@ spec:
               value: "http://swpxkam.gov.bc.ca:8080"
             - name: NO_PROXY
               value: .cluster.local,.svc,10.91.0.0/16,172.30.0.0/16,127.0.0.1,localhost,.gov.bc.ca
+          volumeMounts:
+            - name: data-volume
+              mountPath: /home/myuser
           livenessProbe:
             exec:
               command:
                 - "telnet"
-                - "{{ "{{" }} .Values.telnet.Server {{ "}}" }}"
-                - "{{ "{{" }} .Values.telnet.Port {{ "}}" }}"
+                - "{{ "{{" }} .Values.telnet.goldService {{ "}}" }}"
+                - "{{ "{{" }} .Values.telnet.goldPort {{ "}}" }}"
             initialDelaySeconds: 5
             periodSeconds: 10
           readinessProbe:
             exec:
               command:
                 - "telnet"
-                - "{{ "{{" }} .Values.telnet.Server {{ "}}" }}"
-                - "{{ "{{" }} .Values.telnet.Port {{ "}}" }}"
+                - "{{ "{{" }} .Values.telnet.goldService {{ "}}" }}"
+                - "{{ "{{" }} .Values.telnet.goldPort {{ "}}" }}"
             initialDelaySeconds: 5
             periodSeconds: 10
+      volumes:
+        - name: data-volume
+          emptyDir: {}
 {{ "{{" }}- end {{ "}}" }}

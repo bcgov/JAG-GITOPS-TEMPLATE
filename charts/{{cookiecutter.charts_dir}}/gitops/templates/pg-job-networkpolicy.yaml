@@ -1,0 +1,22 @@
+
+
+kind: NetworkPolicy
+apiVersion: {{ "{{" }} include "common.capabilities.networkPolicy.apiVersion" . {{ "}}" }}
+metadata:
+  name: {{ "{{" }} include "chart.fullname" . {{ "}}" }}-backup-egress
+  namespace: {{ "{{" }} include "common.names.namespace" . | quote {{ "}}" }}
+  labels:
+    app.kubernetes.io/component: pg_dumpall
+    role: backup
+  annotations: 
+    datree.skip/CUSTOM_WORKLOAD_INCORRECT_NETWORK_POLICIES: skipping this policy
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: pg_dumpall
+      job: postgres-job
+  egress:
+    - {}
+  policyTypes:
+    - Egress
+

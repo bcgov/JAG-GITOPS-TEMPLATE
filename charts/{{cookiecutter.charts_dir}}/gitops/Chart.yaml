@@ -41,3 +41,7 @@ dependencies:
     version: "{{ cookiecutter.aspnetcore_version }}"
     repository: "https://charts.bitnami.com/bitnami"
     condition: aspnet-core.enabled
+  - name: react-baseapp
+    repository: "file://../react-baseapp"
+    version: "{{ cookiecutter.reactbaseapp_version }}"
+    condition: "react-baseapp.enabled"

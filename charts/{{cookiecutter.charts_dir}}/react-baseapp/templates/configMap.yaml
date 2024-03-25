@@ -1,0 +1,46 @@
+{{ "{{" }}- if .Values.configMap.create -{{ "}}" }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ "{{" }} include "react-baseapp.configMap" . {{ "}}" }}
+  labels:
+    {{ "{{" }}- include "react-baseapp.labels" . | nindent 4 {{ "}}" }}
+  {{ "{{" }}- with .Values.configMap.annotations {{ "}}" }}
+  annotations:
+    {{ "{{" }}- toYaml . | nindent 4 {{ "}}" }}
+  {{ "{{" }}- end {{ "}}" }}   
+data:
+  default.conf: |
+    server {
+      listen 8080;
+      server_name localhost *.gov.bc.ca;
+
+      root /usr/share/nginx/html;
+      
+      location / {
+          index index.html
+          include /etc/nginx/mime.types;
+          try_files $uri $uri/ /index.html;
+      }
+
+      location /livez {
+          access_log off;
+          add_header 'Content-Type' 'application/json';
+          return 200 '{"status":"Running"}';
+      }
+
+      location /readyz {
+          access_log off;
+          add_header 'Content-Type' 'application/json';
+          return 200 '{"status":"Ready"}';
+      }
+
+      location /healthz {
+          access_log off;
+          add_header 'Content-Type' 'application/json';
+          return 200 '{"status":"Healthy"}';
+      }
+
+    }
+
+{{ "{{" }}- end {{ "}}" }}

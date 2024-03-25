@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ "{{" }} include "react-baseapp.fullname" . {{ "}}" }}
+  labels:
+    {{ "{{" }}- include "react-baseapp.labels" . | nindent 4 {{ "}}" }}
+spec:
+  type: {{ "{{" }} .Values.service.type {{ "}}" }}
+  ports:
+    - port: {{ "{{" }} .Values.service.port {{ "}}" }}
+      targetPort: 8080
+      protocol: TCP
+      name: http
+  selector:
+    {{ "{{" }}- include "react-baseapp.selectorLabels" . | nindent 4 {{ "}}" }}
