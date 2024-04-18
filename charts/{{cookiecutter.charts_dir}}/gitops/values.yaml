@@ -68,3 +68,5 @@ telnet:
 
 react-baseapp:
   enabled: false
+webapi-core:
+  enabled: false

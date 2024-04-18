@@ -7,9 +7,13 @@ metadata:
 spec:
   type: {{ "{{" }} .Values.service.type {{ "}}" }}
   ports:
-    - port: {{ "{{" }} .Values.service.port {{ "}}" }}
-      targetPort: 8080
+    - port: {{ "{{" }} .Values.service.port.nginx {{ "}}" }}
+      targetPort: {{ "{{" }} .Values.service.port.nginx {{ "}}" }}
       protocol: TCP
-      name: http
+      name: nginxport
+    - port: {{ "{{" }} .Values.service.port.next {{ "}}" }}
+      targetPort: {{ "{{" }} .Values.service.port.next {{ "}}" }}
+      protocol: TCP
+      name: nextport
   selector:
     {{ "{{" }}- include "react-baseapp.selectorLabels" . | nindent 4 {{ "}}" }}

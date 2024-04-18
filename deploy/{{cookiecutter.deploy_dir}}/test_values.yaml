@@ -108,6 +108,7 @@ postgresql-ha:
     image:
       pullPolicy: Always
     debug: true
+    password: hb0i97olKO
     initdbScripts:
       my_init_script.sh: |
         #!/bin/sh
@@ -216,3 +217,13 @@ react-baseapp:
     host: react-baseapp-{{cookiecutter.licence_plate}}-test.apps.emerald.devops.gov.bc.ca
     annotations:
       aviinfrasetting.ako.vmware.com/name: "dataclass-medium"
+webapi-core:
+  enabled: true
+  environment: dev
+  app_name: "{{cookiecutter.app_name}}"
+  env: development
+  owner: "{{cookiecutter.team_name}}"
+  project: "{{cookiecutter.project_name}}"
+  part: "{{cookiecutter.project_name}}"
+  podLabels:
+    DataClass: "Medium"

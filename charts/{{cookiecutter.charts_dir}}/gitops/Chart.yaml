@@ -45,3 +45,7 @@ dependencies:
     repository: "file://../react-baseapp"
     version: "{{ cookiecutter.reactbaseapp_version }}"
     condition: "react-baseapp.enabled"
+  - name: webapi-core
+    repository: "file://../webapi-core"
+    version: "{{ cookiecutter.webapicore_version }}"
+    condition: "webapi-core.enabled"

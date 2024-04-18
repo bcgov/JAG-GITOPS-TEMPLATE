@@ -16,7 +16,7 @@ public class WhoAmIController : Controller
     /// </summary>
     /// <returns></returns>
     [HttpGet]
-    [Route("/api/whoami")]
+    [Route("/api/me")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -36,7 +36,7 @@ public class WhoAmIController : Controller
     /// <returns></returns>
 
     [HttpGet]
-    [Route("api/WhoAmI/static-data/{id}")]
+    [Route("api/authors/static-data/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]

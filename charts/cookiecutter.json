@@ -14,5 +14,6 @@
     "postgresql_version": "14.1.1",
     "aspnetcore_version": "5.5.0",
     "postgresqlha_version": "14.0.0",
-    "reactbaseapp_version": "0.1.0"
+    "reactbaseapp_version": "0.1.0",
+    "webapicore_version" : "0.1.0"
 }

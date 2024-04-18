@@ -14,7 +14,7 @@ spec:
     kind: Service
     name:  {{ "{{" }} include "react-baseapp.fullname" . {{ "}}" }}
   port:
-    targetPort: http
+    targetPort: nginxport
   tls:
     termination: edge
     insecureEdgeTerminationPolicy: None

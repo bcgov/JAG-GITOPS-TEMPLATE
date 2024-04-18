@@ -3,6 +3,8 @@ using Newtonsoft.Json;
 using NodaTime;
 using {{cookiecutter.app_name}}webapi.Models;
 using static {{cookiecutter.app_name}}webapi.Features.WhoAmI.WhoAmI;
+using static {{cookiecutter.app_name}}webapi.Features.Participant.Agency;
+using static {{cookiecutter.app_name}}webapi.Features.Participant.Application;
 
 namespace {{cookiecutter.app_name}}webapi.Data;
 public class {{cookiecutter.app_name}}webapiDataContext : DbContext
@@ -12,9 +14,12 @@ public class {{cookiecutter.app_name}}webapiDataContext : DbContext
     public {{cookiecutter.app_name}}webapiDataContext(DbContextOptions<{{cookiecutter.app_name}}webapiDataContext> options, IClock clock) : base(options) => this.clock = clock;
 
     public DbSet<Author> Authors { get; set; } = default!;
+    public DbSet<AgencyAssignment> AgencyAssignments { get; set; } = default!;
+    public DbSet<ApplicationType> ApplicationTypes { get; set; } = default!;
+    public DbSet<TypeAgency> TypeAgencies { get; set; } = default!;
 
 
-    public override int SaveChanges()
+public override int SaveChanges()
     {
         this.ApplyAudits();
 
@@ -58,28 +63,33 @@ public class {{cookiecutter.app_name}}webapiDataContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        //modelBuilder.Entity<DigitalEvidence>().Property(x => x.AssignedRegions).
-        //    HasConversion(
-        //                  v => JsonConvert.SerializeObject(v, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }),
-        //        v => JsonConvert.DeserializeObject<List<AssignedRegion>>(v, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore })
+    //modelBuilder.Entity<DigitalEvidence>().Property(x => x.AssignedRegions).
+    //    HasConversion(
+    //                  v => JsonConvert.SerializeObject(v, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }),
+    //        v => JsonConvert.DeserializeObject<List<AssignedRegion>>(v, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore })
 
-        //    );
+    //    );
 
-        //modelBuilder.Entity<IdempotentConsumer>()
-        //    .ToTable("IdempotentConsumers")
-        //    .HasKey(x => new { x.MessageId, x.Consumer });
+    //modelBuilder.Entity<IdempotentConsumer>()
+    //    .ToTable("IdempotentConsumers")
+    //    .HasKey(x => new { x.MessageId, x.Consumer });
 
-        //modelBuilder.Entity<ExportedEvent>()
-        //     .ToTable("OutBoxedExportedEvent");
-        ////.Property(x => x.JsonEventPayload).HasColumnName("EventPayload");
+    //modelBuilder.Entity<ExportedEvent>()
+    //     .ToTable("OutBoxedExportedEvent");
+    ////.Property(x => x.JsonEventPayload).HasColumnName("EventPayload");
 
-        //modelBuilder.Entity<ExportedEvent>()
-        //    .ToTable("OutBoxedExportedEvent");
+    //modelBuilder.Entity<ExportedEvent>()
+    //    .ToTable("OutBoxedExportedEvent");
 
-        //// Adds Quartz.NET PostgreSQL schema to EntityFrameworkCore
-        //modelBuilder.AddQuartz(builder => builder.UsePostgreSql());
+    //// Adds Quartz.NET PostgreSQL schema to EntityFrameworkCore
+    //modelBuilder.AddQuartz(builder => builder.UsePostgreSql());
 
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof({{cookiecutter.app_name}}webapiDataContext).Assembly);
+    modelBuilder.Entity<AgencyAssignment>().ToTable("agencyassignment", schema: "public");
+    modelBuilder.Entity<TypeAgency>()
+   .HasKey("agencyassignmentid");
+    modelBuilder.Entity<TypeAgency>().ToTable("type_agency", schema: "public");
+
+    modelBuilder.ApplyConfigurationsFromAssembly(typeof({{cookiecutter.app_name}}webapiDataContext).Assembly);
 
     }
 

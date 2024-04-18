@@ -41,23 +41,32 @@ spec:
           image: "{{ "{{" }} .Values.image.repository {{ "}}" }}:{{ "{{" }} .Values.image.tag | default .Chart.AppVersion {{ "}}" }}"
           imagePullPolicy: {{ "{{" }} .Values.image.pullPolicy {{ "}}" }}
           ports:
-            - name: http
-              containerPort: {{ "{{" }} .Values.service.port {{ "}}" }}
+            - name: ngnixport
+              containerPort: {{ "{{" }} .Values.service.port.nginx {{ "}}" }}
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /livez
-              port: http
+              path: /api/public/health
+              port: nginxport
           readinessProbe:
             httpGet:
-              path: /readyz
-              port: http
+              path: /api/public/health
+              port: nginxport
           resources:
             {{ "{{" }}- toYaml .Values.resources | nindent 12 {{ "}}" }}
           {{ "{{" }}- with .Values.volumeMounts {{ "}}" }}
           volumeMounts:
             {{ "{{" }}- toYaml . | nindent 12 {{ "}}" }}
           {{ "{{" }}- end {{ "}}" }}
+          env:
+            - name: VITE_DIAM_AUTH_URL
+              value: {{ "{{" }} .Values.keycloak.authUrl {{ "}}" }}
+            - name: VITE_DIAM_AUTH_REALM
+              value: {{ "{{" }} .Values.keycloak.realm {{ "}}" }}
+            - name: VITE_DIAM_AUTH_CLIENT_ID
+              value: {{ "{{" }} .Values.keycloak.clientId {{ "}}" }}
+            - name: VITE_API_URL
+              value: {{ "{{" }} .Release.Name {{ "}}" }}-webapi-core:8080
       {{ "{{" }}- with .Values.volumes {{ "}}" }}
       volumes:
         {{ "{{" }}- toYaml . | nindent 8 {{ "}}" }}
