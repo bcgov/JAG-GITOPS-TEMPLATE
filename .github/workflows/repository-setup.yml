@@ -134,6 +134,7 @@ jobs:
           ! -name 'cookiecutter-temp' \
           ! -name 'README.md' \
           ! -name '.github' \
+          ! -name '.' \
           ! -exec rm -rf {} +
 
       - name: Move files to root
@@ -163,6 +164,9 @@ jobs:
         run: |
           git config --global user.email "actions@github.com"
           git config --global user.name "GitHub Actions"
+
+          rm -rf .github/workflows/setup-repository.yml
+          rm -rf .github/workflows/repository-setup.yml
 
           git add .
           git commit -m "Automated commit: Create Cookiecutter template"
