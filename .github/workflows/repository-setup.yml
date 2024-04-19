@@ -2,7 +2,6 @@ name: Setup repository via dispatch
 on:
   repository_dispatch:
     types: [repository_setup]
-  push:
   workflow_dispatch:
     inputs:
       licence_plate:
@@ -16,13 +15,11 @@ jobs:
   setup-dispatch:
     name: Auto-reinitialize repository
     runs-on: ubuntu-latest
-    env:
-      REPO_SETUP_TOKEN: ${{ github.event.client_payload.REPO_SETUP_TOKEN }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
         with:
-            token: ${{ github.event.client_payload.REPO_SETUP_TOKEN }}
+            token: ${{ secrets.GITHUB_TOKEN  }}
       - name: Do not run scaffolding on template repository
         shell: bash
         # This workflow runs when the `cookiecutter.json` file is modified.
@@ -33,7 +30,7 @@ jobs:
         # is a template repository or not.
         run: |
           curl --silent -X GET \
-            -H "Authorization: token ${{ github.event.client_payload.REPO_SETUP_TOKEN }}" \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN  }}" \
             -H "Accept: application/vnd.github.baptiste-preview+json" \
             https://api.github.com/repos/$GITHUB_REPOSITORY \
             | jq --exit-status '.is_template == false';
@@ -47,60 +44,6 @@ jobs:
         run: pip install cookiecutter
 
 
-      - name: Add admin teams to repository
-        run: |
-            for team in "ag-pssg-isb" "ag-pssg-emerald"; do
-                curl -L \
-                    -X PUT \
-                    -H "Accept: application/vnd.github+json" \
-                    -H "Authorization: Bearer ${{ github.event.client_payload.REPO_SETUP_TOKEN }}" \
-                    -H "X-GitHub-Api-Version: 2022-11-28" \
-                    https://api.github.com/orgs/bcgov/teams/$team/repos/${{ github.repository }} \
-                    -d '{"permission":"admin"}'
-            done
-
-      - name: Add Read only ISB vendors teams to repository
-        run: |
-            for team in "ag-pssg-nttdata" "ag-pssg-quartech" "ag-pssg-integration-services"; do
-                curl -L \
-                    -X PUT \
-                    -H "Accept: application/vnd.github+json" \
-                    -H "Authorization: Bearer ${{ github.event.client_payload.REPO_SETUP_TOKEN }}" \
-                    -H "X-GitHub-Api-Version: 2022-11-28" \
-                    https://api.github.com/orgs/bcgov/teams/$team/repos/${{ github.repository }} \
-                    -d '{"permission":"pull"}'
-            done
-
-      - name: Add admin collaborators
-        run: |
-            for username in "sookeke" "ag-pssg-isb-sa"; do
-                curl -L \
-                    -X PUT \
-                    -H "Accept: application/vnd.github+json" \
-                    -H "Authorization: Bearer ${{ github.event.client_payload.REPO_SETUP_TOKEN }}" \
-                    -H "X-GitHub-Api-Version: 2022-11-28" \
-                    "https://api.github.com/repos/${{ github.repository }}/collaborators/$username" \
-                    -d '{"permission":"admin"}'
-            done
-
-
-
-        
-    #   - name: Setup ArgoCD CLI 
-    #     uses: imajeetyadav/argocd-cli@v1
-    #     with:
-    #       version: v2.5.7 # optional
-          
-    #   - name: Create ArgoCD Application deployment
-    #     uses: clowdhaus/argo-cd-action/@main
-    #     env:
-    #         # Only required for first step in job where API is called
-    #         # All subsequent setps in a job will not re-download the CLI
-    #         GITHUB_TOKEN: ${{ github.event.client_payload.REPO_SETUP_TOKEN }}
-    #     with:
-    #         command: version
-    #         options: --client
-
 
 
       - name: Create and Push Charts Template
@@ -109,17 +52,16 @@ jobs:
           ./charts \
           --verbose \
           --no-input \
-          app_name=$(echo "${{ github.event.client_payload.licence_plate }}-app" | tr '[:upper:]' '[:lower:]') \
-          licence_plate=$(echo "${{ github.event.client_payload.licence_plate }}" | tr '[:upper:]' '[:lower:]') \
-          team_name=$(echo "${{ github.event.client_payload.licence_plate }}-team" | tr '[:upper:]' '[:lower:]') \
-          project_name=$(echo "${{ github.event.client_payload.licence_plate }}-project" | tr '[:upper:]' '[:lower:]') \
+          app_name=$(echo "${{ github.event.client_payload.licence_plate || github.event.inputs.licence_plate }}-app" | tr '[:upper:]' '[:lower:]') \
+          licence_plate=$(echo "${{ github.event.client_payload.licence_plate || github.event.inputs.licence_plate }}" | tr '[:upper:]' '[:lower:]') \
+          team_name=$(echo "${{ github.event.client_payload.licence_plate || github.event.inputs.licence_plate }}-team" | tr '[:upper:]' '[:lower:]') \
+          project_name=$(echo "${{ github.event.client_payload.licence_plate || github.event.inputs.licence_plate }}-project" | tr '[:upper:]' '[:lower:]') \
           --output-dir ./cookiecutter-temp
         env:
-          GITHUB_TOKEN: ${{ github.event.client_payload.REPO_SETUP_TOKEN}}
-          APP_NAME: ${{ github.event.client_payload.app_name }}
-          LICENCE_PLATE: ${{ github.event.client_payload.licence_plate }}
-          TEAM_NAME: ${{ github.event.client_payload.team_name }}
-          PROJECT_NAME: ${{ github.event.client_payload.project_name }}
+          APP_NAME: ${{ github.event.client_payload.app_name || github.event.inputs.licence_plate }}
+          LICENCE_PLATE: ${{ github.event.client_payload.licence_plate || github.event.inputs.licence_plate }}
+          TEAM_NAME: ${{ github.event.client_payload.team_name || github.event.inputs.licence_plate }}
+          PROJECT_NAME: ${{ github.event.client_payload.project_name || github.event.inputs.licence_plate }}
     
       - name: Create and Push Application Template
         run: |
@@ -169,66 +111,19 @@ jobs:
           project_name=$(echo "${{ github.event.client_payload.licence_plate }}-project" | tr '[:upper:]' '[:lower:]') \
           --output-dir ./cookiecutter-temp
     
-      - name: Create and Push RBAC Template
-        run: |
-          cookiecutter \
-          ./rbac \
-          --verbose \
-          --no-input \
-          app_name=$(echo "${{ github.event.client_payload.licence_plate }}-app" | tr '[:upper:]' '[:lower:]') \
-          licence_plate=$(echo "${{ github.event.client_payload.licence_plate }}" | tr '[:upper:]' '[:lower:]') \
-          team_name=$(echo "${{ github.event.client_payload.licence_plate }}-team" | tr '[:upper:]' '[:lower:]') \
-          project_name=$(echo "${{ github.event.client_payload.licence_plate }}-project" | tr '[:upper:]' '[:lower:]') \
-          --output-dir ./cookiecutter-temp
+      # - name: Create and Push RBAC Template
+      #   run: |
+      #     cookiecutter \
+      #     ./rbac \
+      #     --verbose \
+      #     --no-input \
+      #     app_name=$(echo "${{ github.event.client_payload.licence_plate }}-app" | tr '[:upper:]' '[:lower:]') \
+      #     licence_plate=$(echo "${{ github.event.client_payload.licence_plate }}" | tr '[:upper:]' '[:lower:]') \
+      #     team_name=$(echo "${{ github.event.client_payload.licence_plate }}-team" | tr '[:upper:]' '[:lower:]') \
+      #     project_name=$(echo "${{ github.event.client_payload.licence_plate }}-project" | tr '[:upper:]' '[:lower:]') \
+      #     --output-dir ./cookiecutter-temp
 
-      - name: Checkout Emerald RBAC Template Repo
-        id: rbac
-        uses: actions/checkout@v4
-        with:
-            repository: bcgov-c/ministry-gitops-jag
-            ref: LEA-GITOPS
-            token: ${{ github.event.client_payload.REPO_SETUP_TOKEN }}
-            path: rbac_emerald
-    
-      - name: Create RBAC YAML 
-        run: |
-            if [ ! -d "/rbac_emerald/rbac_emerald/${{ github.event.client_payload.licence_plate}}" ]; then
-                mkdir -p rbac_emerald/rbac_emerald/${{ github.event.client_payload.licence_plate}}
-                echo "Folder created"
-                ls -A rbac_emerald/rbac_emerald/
-                # move cookiecuter rbac to this folder
-                rsync -av cookiecutter-temp/${{ github.event.client_payload.licence_plate}} rbac_emerald/rbac_emerald/
-
-                rm -rf cookiecutter-temp/${{ github.event.client_payload.licence_plate}}
-
-                cd rbac_emerald/rbac_emerald/
-
-                git config --global user.email "actions@github.com"
-                git config --global user.name "GitHub Actions"
-
-                git add .
-                
-                git commit -m "Auto Create RBAC"
-                git push origin LEA-GITOPS  # Update the branch name as needed
-
-            else
-                echo "Folder already exists"
-                ls -A rbac_emerald/rbac_emerald/
-                # move cookiecuter rbac to this folder
-                mv cookiecutter-temp/${{ github.event.client_payload.licence_plate}} rbac_emerald/rbac_emerald/
-
-                cd rbac_emerald/rbac_emerald/
-
-                git config --global user.email "actions@github.com"
-                git config --global user.name "GitHub Actions"
-
-                git add .
-                
-                git commit -m "Auto Create RBAC"
-                git push origin LEA-GITOPS  # Update the branch name as needed
- 
-            fi
-
+   
       - name: Prepare root directory
         shell: bash
         # Remove all files and folder exepct .git/ and cookiecutter-temp/
@@ -237,7 +132,7 @@ jobs:
           ! -name '.git' \
           ! -name 'cookiecutter-temp' \
           ! -name 'README.md' \
-          ! -name '.' \
+          ! -name '.github/workflows/repository-setup.yml' \
           ! -exec rm -rf {} +
 
       - name: Move files to root
@@ -268,8 +163,6 @@ jobs:
           git config --global user.email "actions@github.com"
           git config --global user.name "GitHub Actions"
 
-          rm .github/workflows/repository-setup.yml
-          rm .github/workflows/setup-repository.yml
           git add .
           git commit -m "Automated commit: Create Cookiecutter template"
           git push origin develop
@@ -280,38 +173,4 @@ jobs:
           git checkout -b main develop
           git push origin main
 
-      - name: Configure Branch Protection
-        run: |
-            curl -L \
-            -X PUT \
-            -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${{ github.event.client_payload.REPO_SETUP_TOKEN}}" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            https://api.github.com/repos/${{ github.repository }}/branches/main/protection \
-            -d '{
-                "required_status_checks": {
-                  "strict": true,
-                  "contexts": ["policy-check"]
-                },
-                "enforce_admins": true,
-                "required_pull_request_reviews": {
-                  "dismiss_stale_reviews": true,
-                  "require_code_owner_reviews": true,
-                  "required_approving_review_count": 2,
-                  "require_last_push_approval": true,
-                  "bypass_pull_request_allowances": {
-                    "teams": ["ag-pssg-emerald", "ag-pssg-isb"]
-                  }
-                },
-                "restrictions": {
-                  "users": ["ag-pssg-isb-sa"],
-                  "teams": ["ag-pssg-emerald", "ag-pssg-isb"]
-                },
-                "required_linear_history": true,
-                "block_creations": true,
-                "required_conversation_resolution": true,
-                "lock_branch": true,
-                "allow_fork_syncing": true
-              }'
-        env:
-          GITHUB_TOKEN: ${{ github.event.client_payload.REPO_SETUP_TOKEN }}
+
