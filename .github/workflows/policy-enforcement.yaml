@@ -48,13 +48,13 @@ jobs:
 
           if [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
             echo "This is the main branch"
-            helm datree test --ignore-missing-schemas --policy-config ../policies.yaml --include-tests ../../charts/gitops --  --values ../../deploy/prod_values.yaml gitops-app-prod
+            helm datree test --ignore-missing-schemas --policy-config ../policies.yaml --include-tests ../../charts/gitops -- --namespace prod --values ../../deploy/prod_values.yaml gitops-app-prod
           elif [[ "$GITHUB_REF" == "refs/heads/develop" || "$GITHUB_REF" == "refs/heads/gitops" ]]; then
             echo "This is the dev branch"
-            helm datree test --ignore-missing-schemas --policy-config ../policies.yaml  --include-tests ../../charts/gitops -- --values ../../deploy/dev_values.yaml gitops-app-dev
+            helm datree test --ignore-missing-schemas --policy-config ../policies.yaml  --include-tests ../../charts/gitops -- --namespace dev --values ../../deploy/dev_values.yaml gitops-app-dev
           elif [[ "$GITHUB_REF" == "refs/heads/test" ]]; then
             echo "This is the test branch"
-            helm datree test --ignore-missing-schemas --policy-config ../policies.yaml --include-tests ../../charts/gitops -- --values ../../deploy/test_values.yaml gitops-app-test
+            helm datree test --ignore-missing-schemas --policy-config ../policies.yaml --include-tests ../../charts/gitops -- --namespace test --values ../../deploy/test_values.yaml gitops-app-test
           else
             echo "This is another branch"
             # Add commands for other branches here, if needed

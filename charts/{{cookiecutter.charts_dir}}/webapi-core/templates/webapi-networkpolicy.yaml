@@ -5,7 +5,7 @@ metadata:
   name: {{ "{{" }} include "chart.fullname" . {{ "}}" }}-api-ingress
   namespace: {{ "{{" }} include "common.names.namespace" . | quote {{ "}}" }}
   labels:
-    app.kubernetes.io/component: webapicore
+    {{ "{{" }}- include "webapi-core.labels" . | nindent 4 {{ "}}" }}
   annotations: 
     datree.skip/CUSTOM_WORKLOAD_INCORRECT_NETWORK_POLICIES: skipping this policy
     datree.skip/CUSTOM_WORKLOAD_INVALID_LABELS_VALUE: skipping this policy

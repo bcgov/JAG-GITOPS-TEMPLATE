@@ -5,7 +5,7 @@ metadata:
   name: {{ "{{" }} include "chart.fullname" . {{ "}}" }}-api-egress
   namespace: {{ "{{" }} include "common.names.namespace" . | quote {{ "}}" }}
   labels:
-    app.kubernetes.io/component: reactbaseapp
+    {{ "{{" }}- include "react-baseapp.labels" . | nindent 4 {{ "}}" }}
   annotations: 
     datree.skip/CUSTOM_WORKLOAD_INCORRECT_NETWORK_POLICIES: skipping this policy
     datree.skip/CUSTOM_WORKLOAD_INVALID_LABELS_VALUE: skipping this policy
