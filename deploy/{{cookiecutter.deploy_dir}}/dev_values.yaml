@@ -228,6 +228,10 @@ postgresql-ha:
             - podSelector:
                 matchLabels:
                   job: postgres-job
+        - from:
+            - podSelector:
+                matchLabels:
+                  app.kubernetes.io/name: webapi-core
     podSecurityContext:
       enabled: false
     persistence:

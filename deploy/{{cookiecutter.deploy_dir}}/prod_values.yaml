@@ -147,6 +147,10 @@ postgresql-ha:
             - podSelector:
                 matchLabels:
                   job: postgres-job
+        - from:
+            - podSelector:
+                matchLabels:
+                  app.kubernetes.io/name: webapi-core
     podSecurityContext:
       enabled: false
     persistence:
@@ -214,20 +218,31 @@ react-baseapp:
   owner: "{{cookiecutter.team_name}}"
   project: "{{cookiecutter.project_name}}"
   part: "{{cookiecutter.project_name}}"
+  keycloak:
+    authUrl: https://sso-e27db1-dev.apps.gold.devops.gov.bc.ca/auth
+    realm: ISB
+    clientId: react-baseapp
+  apiUrl: "{{cookiecutter.app_name}}-webapi-core:8080"
   podLabels:
     DataClass: "Medium"
   route:
     host: react-baseapp-{{cookiecutter.licence_plate}}-prod.apps.emerald.devops.gov.bc.ca
     annotations:
       aviinfrasetting.ako.vmware.com/name: "dataclass-medium"
-      datree.skip/CUSTOM_REPLICA_COUNT_PROD: skip for default helm.
+
 webapi-core:
   enabled: true
-  environment: dev
+  environment: prod
   app_name: "{{cookiecutter.app_name}}"
-  env: development
+  env: production
   owner: "{{cookiecutter.team_name}}"
   project: "{{cookiecutter.project_name}}"
   part: "{{cookiecutter.project_name}}"
+  keycloak:
+    realmUrl: https://sso-e27db1-dev.apps.gold.devops.gov.bc.ca/auth/realms/ISB
+    adminClientId: WEB-API
+    ClientId: WEB-API
+  database:
+    connectionString: "Host=gitops-postgresql-ha-postgresql;Port=5432;Database=postgres;Username=postgres;Password=hb0i97olKO"
   podLabels:
     DataClass: "Medium"

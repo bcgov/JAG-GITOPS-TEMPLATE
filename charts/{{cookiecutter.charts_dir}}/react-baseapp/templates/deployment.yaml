@@ -41,17 +41,27 @@ spec:
           image: "{{ "{{" }} .Values.image.repository {{ "}}" }}:{{ "{{" }} .Values.image.tag | default .Chart.AppVersion {{ "}}" }}"
           imagePullPolicy: {{ "{{" }} .Values.image.pullPolicy {{ "}}" }}
           ports:
-            - name: ngnixport
+            - name: nginxport
               containerPort: {{ "{{" }} .Values.service.port.nginx {{ "}}" }}
               protocol: TCP
           livenessProbe:
             httpGet:
               path: /api/public/health
-              port: nginxport
+              port: {{ "{{" }} .Values.service.port.nginx {{ "}}" }}
+            initialDelaySeconds: 15
+            timeoutSeconds: 25
+            periodSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
           readinessProbe:
             httpGet:
               path: /api/public/health
-              port: nginxport
+              port: {{ "{{" }} .Values.service.port.nginx {{ "}}" }}
+            initialDelaySeconds: 15
+            timeoutSeconds: 25
+            periodSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
           resources:
             {{ "{{" }}- toYaml .Values.resources | nindent 12 {{ "}}" }}
           {{ "{{" }}- with .Values.volumeMounts {{ "}}" }}
