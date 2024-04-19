@@ -70,10 +70,10 @@ jobs:
           ./application \
           --verbose \
           --no-input \
-          app_name=$(echo "${{ github.event.client_payload.licence_plate }}-app" | tr '[:upper:]' '[:lower:]') \
-          licence_plate=$(echo "${{ github.event.client_payload.licence_plate }}" | tr '[:upper:]' '[:lower:]') \
-          team_name=$(echo "${{ github.event.client_payload.licence_plate }}-team" | tr '[:upper:]' '[:lower:]') \
-          project_name=$(echo "${{ github.event.client_payload.licence_plate }}-project" | tr '[:upper:]' '[:lower:]') \
+          app_name=$(echo "${{ github.event.client_payload.licence_plate || github.event.inputs.licence_plate}}-app" | tr '[:upper:]' '[:lower:]') \
+          licence_plate=$(echo "${{ github.event.client_payload.licence_plate || github.event.inputs.licence_plate}}" | tr '[:upper:]' '[:lower:]') \
+          team_name=$(echo "${{ github.event.client_payload.licence_plate || github.event.inputs.licence_plate}}-team" | tr '[:upper:]' '[:lower:]') \
+          project_name=$(echo "${{ github.event.client_payload.licence_plate || github.event.inputs.licence_plate}}-project" | tr '[:upper:]' '[:lower:]') \
           --output-dir ./cookiecutter-temp
     
       - name: Create and Push Application Code
@@ -82,10 +82,10 @@ jobs:
           ./appcode \
           --verbose \
           --no-input \
-          app_name=$(echo "${{ github.event.client_payload.licence_plate }}-app" | tr '[:upper:]' '[:lower:]') \
-          licence_plate=$(echo "${{ github.event.client_payload.licence_plate }}" | tr '[:upper:]' '[:lower:]') \
-          team_name=$(echo "${{ github.event.client_payload.licence_plate }}-team" | tr '[:upper:]' '[:lower:]') \
-          project_name=$(echo "${{ github.event.client_payload.licence_plate }}-project" | tr '[:upper:]' '[:lower:]') \
+          app_name=$(echo "${{ github.event.client_payload.licence_plate || github.event.inputs.licence_plate}}-app" | tr '[:upper:]' '[:lower:]') \
+          licence_plate=$(echo "${{ github.event.client_payload.licence_plate || github.event.inputs.licence_plate}}" | tr '[:upper:]' '[:lower:]') \
+          team_name=$(echo "${{ github.event.client_payload.licence_plate || github.event.inputs.licence_plate}}-team" | tr '[:upper:]' '[:lower:]') \
+          project_name=$(echo "${{ github.event.client_payload.licence_plate || github.event.inputs.licence_plate}}-project" | tr '[:upper:]' '[:lower:]') \
           --output-dir ./cookiecutter-temp
 
       # - name: Create and Push workflow Template
@@ -106,10 +106,10 @@ jobs:
           ./deploy \
           --verbose \
           --no-input \
-          app_name=$(echo "${{ github.event.client_payload.licence_plate }}-app" | tr '[:upper:]' '[:lower:]') \
-          licence_plate=$(echo "${{ github.event.client_payload.licence_plate }}" | tr '[:upper:]' '[:lower:]') \
-          team_name=$(echo "${{ github.event.client_payload.licence_plate }}-team" | tr '[:upper:]' '[:lower:]') \
-          project_name=$(echo "${{ github.event.client_payload.licence_plate }}-project" | tr '[:upper:]' '[:lower:]') \
+          app_name=$(echo "${{ github.event.client_payload.licence_plate || github.event.inputs.licence_plate}}-app" | tr '[:upper:]' '[:lower:]') \
+          licence_plate=$(echo "${{ github.event.client_payload.licence_plate || github.event.inputs.licence_plate}}" | tr '[:upper:]' '[:lower:]') \
+          team_name=$(echo "${{ github.event.client_payload.licence_plate || github.event.inputs.licence_plate}}-team" | tr '[:upper:]' '[:lower:]') \
+          project_name=$(echo "${{ github.event.client_payload.licence_plate || github.event.inputs.licence_plate}}-project" | tr '[:upper:]' '[:lower:]') \
           --output-dir ./cookiecutter-temp
     
       # - name: Create and Push RBAC Template
@@ -133,7 +133,7 @@ jobs:
           ! -name '.git' \
           ! -name 'cookiecutter-temp' \
           ! -name 'README.md' \
-          ! -name '.github/workflows/repository-setup.yml' \
+          ! -name '.github' \
           ! -exec rm -rf {} +
 
       - name: Move files to root
