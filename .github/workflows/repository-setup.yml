@@ -2,6 +2,16 @@ name: Setup repository via dispatch
 on:
   repository_dispatch:
     types: [repository_setup]
+  push:
+  workflow_dispatch:
+    inputs:
+      licence_plate:
+        description: "License plate"
+        required: true
+
+permissions:
+  contents: write
+
 jobs:
   setup-dispatch:
     name: Auto-reinitialize repository
@@ -135,17 +145,17 @@ jobs:
           project_name=$(echo "${{ github.event.client_payload.licence_plate }}-project" | tr '[:upper:]' '[:lower:]') \
           --output-dir ./cookiecutter-temp
 
-      - name: Create and Push workflow Template
-        run: |
-          cookiecutter \
-          ./workflow \
-          --verbose \
-          --no-input \
-          app_name=$(echo "${{ github.event.client_payload.licence_plate }}-app" | tr '[:upper:]' '[:lower:]') \
-          licence_plate=$(echo "${{ github.event.client_payload.licence_plate }}" | tr '[:upper:]' '[:lower:]') \
-          team_name=$(echo "${{ github.event.client_payload.licence_plate }}-team" | tr '[:upper:]' '[:lower:]') \
-          project_name=$(echo "${{ github.event.client_payload.licence_plate }}-project" | tr '[:upper:]' '[:lower:]') \
-          --output-dir ./cookiecutter-temp
+      # - name: Create and Push workflow Template
+      #   run: |
+      #     cookiecutter \
+      #     ./workflow \
+      #     --verbose \
+      #     --no-input \
+      #     app_name=$(echo "${{ github.event.client_payload.licence_plate }}-app" | tr '[:upper:]' '[:lower:]') \
+      #     licence_plate=$(echo "${{ github.event.client_payload.licence_plate }}" | tr '[:upper:]' '[:lower:]') \
+      #     team_name=$(echo "${{ github.event.client_payload.licence_plate }}-team" | tr '[:upper:]' '[:lower:]') \
+      #     project_name=$(echo "${{ github.event.client_payload.licence_plate }}-project" | tr '[:upper:]' '[:lower:]') \
+      #     --output-dir ./cookiecutter-temp
 
       - name: Create and Push deploy Template
         run: |
@@ -257,6 +267,9 @@ jobs:
         run: |
           git config --global user.email "actions@github.com"
           git config --global user.name "GitHub Actions"
+
+          rm .github/workflows/repository-setup.yml
+          rm .github/workflows/setup-repository.yml
           git add .
           git commit -m "Automated commit: Create Cookiecutter template"
           git push origin develop
