@@ -13,6 +13,7 @@ permissions:
 
 jobs:
   setup-dispatch:
+    if: ${{ github.repository != 'bcgov-c/ministry-gitops-jag-template' }}
     name: Auto-reinitialize repository
     runs-on: ubuntu-latest
     steps:
