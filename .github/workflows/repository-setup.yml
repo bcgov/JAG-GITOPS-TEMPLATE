@@ -151,7 +151,7 @@ jobs:
       - name: Replace Placeholders
         id: placeholder
         run: |
-            sed -i "s/\$app/${{ github.event.client_payload.licence_plate }}-app/g; s/\$namespace/${{ github.event.client_payload.licence_plate }}/g; s/\$team/${{ github.event.client_payload.licence_plate }}-team/g" README.md
+            sed -i "s/\$app/${{ github.event.client_payload.licence_plate || github.event.inputs.licence_plate }}-app/g; s/\$namespace/${{ github.event.client_payload.licence_plate || github.event.inputs.licence_plate }}/g; s/\$team/${{ github.event.client_payload.licence_plate || github.event.inputs.licence_plate }}-team/g" README.md
 
            
 
