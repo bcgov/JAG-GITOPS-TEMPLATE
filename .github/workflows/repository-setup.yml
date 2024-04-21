@@ -9,11 +9,8 @@ on:
         required: true
 
 permissions:
-  contents: read
+  contents: write
   repository-projects: write
-  actions: write       # Necessary to cancel workflow executions
-  packages: write
-  id-token: write
 
 jobs:
   setup-dispatch:
