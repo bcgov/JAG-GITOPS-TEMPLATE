@@ -11,7 +11,12 @@ on:
 permissions:
   contents: write
   repository-projects: write
-
+  actions: write       # Necessary to cancel workflow executions
+  checks: write        # Necessary to write reports
+  pull-requests: write # Necessary to comment on PRs
+  packages: write
+  id-token: write
+  
 jobs:
   setup-dispatch:
     if: ${{ github.repository != 'bcgov-c/ministry-gitops-jag-template' }}
