@@ -83,10 +83,6 @@ jobs:
           ./appcode \
           --verbose \
           --no-input \
-          app_name=$(echo "${{ github.event.client_payload.licence_plate || github.event.inputs.licence_plate}}-app" | tr '[:upper:]' '[:lower:]') \
-          licence_plate=$(echo "${{ github.event.client_payload.licence_plate || github.event.inputs.licence_plate}}" | tr '[:upper:]' '[:lower:]') \
-          team_name=$(echo "${{ github.event.client_payload.licence_plate || github.event.inputs.licence_plate}}-team" | tr '[:upper:]' '[:lower:]') \
-          project_name=$(echo "${{ github.event.client_payload.licence_plate || github.event.inputs.licence_plate}}-project" | tr '[:upper:]' '[:lower:]') \
           --output-dir ./cookiecutter-temp
 
       # - name: Create and Push workflow Template
@@ -179,6 +175,8 @@ jobs:
           git checkout -b main develop
           git push origin main
 
+
+      # this step does not work due to limitation of GITHUB_TOKEN creating branch protection
       - name: Configure Branch Protection
         run: |
               curl -L \
@@ -214,3 +212,9 @@ jobs:
                 }'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  trigger-rbac:
+    needs: [setup-dispatch] 
+    uses: bcgov-c/ministry-gitops-jag/.github/workflows/default-rbac.yml@template
+    with:
+      licence_plate: ${{ github.event.client_payload.licence_plate || github.event.inputs.licence_plate }}
