@@ -212,4 +212,22 @@ public static class ClaimsPrincipalExtensions
     {
         public IEnumerable<string> Roles { get; set; } = Enumerable.Empty<string>();
     }
+    public static JustinParticipant GetJustinParticipant(this ClaimsPrincipal user)
+    {
+        var justinParticipantClaim = user?.Claims.FirstOrDefault(c => c.Type == Claims.JustinParticipant);
+
+        if (justinParticipantClaim == null)
+        {
+            return new JustinParticipant();
+        }
+
+        return JsonSerializer.Deserialize<JustinParticipant>(justinParticipantClaim.Value, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase })!;
+    }
+    public class JustinParticipant
+    {
+        public decimal PartId { get; set; }
+        public string UserId { get; set; } = string.Empty;
+        public List<string> AgencyAssignments { get; set; } = [];
+        public List<string> Roles { get; set; } = [];
+    }
 }

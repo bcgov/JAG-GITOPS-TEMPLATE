@@ -277,6 +277,7 @@ telnet:
   diamSSO: test.common-sso.justice.gov.bc.ca # testing outbound to DIAM Common-SSO
   diamPort: 80
   diamEgressIP: 142.34.51.102/32
+  justinEgressIP: 142.34.47.201/32 # JUSTIN test IP
   publicService: "https://docker.io" # testing connectivity from emerald to internet via web proxy using curl
   gitHubUrl: "https://github.com/bcgov/JAG-GITOPS-TEMPLATE.git" # test connectivity outbound to github via git clone
   commonLabels:

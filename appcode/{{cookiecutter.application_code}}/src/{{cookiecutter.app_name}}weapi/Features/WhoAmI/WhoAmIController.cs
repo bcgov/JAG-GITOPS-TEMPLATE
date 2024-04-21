@@ -25,7 +25,7 @@ public class WhoAmIController : Controller
     {
         var userIdentity = HttpContext.User;
 
-        return Ok(new { id= userIdentity.GetUserId(), firstName = userIdentity!.GetFirstName(), lastName = userIdentity.GetLastName(), email = userIdentity.GetEmail(), role = userIdentity!.GetKeycloakRoles() });
+        return Ok(new { id= userIdentity.GetUserId(), firstName = userIdentity!.GetFirstName(), lastName = userIdentity.GetLastName(), email = userIdentity.GetEmail(), role = userIdentity!.GetKeycloakRoles(), justin_participant = userIdentity!.GetJustinParticipant() });
     }
 
     /// <summary>

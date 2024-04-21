@@ -201,6 +201,7 @@ telnet:
   diamSSO: common-sso.justice.gov.bc.ca # testing outbound to DIAM Common-SSO
   diamPort: 80
   diamEgressIP: 142.34.208.118/32 # PROD DIAM IP
+  justinEgressIP: 142.34.47.201/32 # JUSTIN PROD IP
   publicService: "https://docker.io" # testing connectivity from emerald to internet via web proxy using curl
   gitHubUrl: "https://github.com/bcgov/JAG-GITOPS-TEMPLATE.git" # test connectivity outbound to github via git clone
   commonLabels:
@@ -210,6 +211,8 @@ telnet:
     project: "{{cookiecutter.project_name}}"
     DataClass: "Medium"
     app.kubernetes.io/part-of: "{{cookiecutter.project_name}}"
+  podAnnotations:
+    datree.skip/CUSTOM_REPLICA_COUNT_PROD: skip for default helm.
 
 react-baseapp:
   enabled: true
@@ -225,6 +228,8 @@ react-baseapp:
   apiUrl: "{{cookiecutter.app_name}}-webapi-core:8080"
   podLabels:
     DataClass: "Medium"
+  podAnnotations:
+    datree.skip/CUSTOM_REPLICA_COUNT_PROD: skip for default helm.
   route:
     host: react-baseapp-{{cookiecutter.licence_plate}}-prod.apps.emerald.devops.gov.bc.ca
     annotations:
@@ -246,3 +251,5 @@ webapi-core:
     connectionString: "Host=gitops-postgresql-ha-postgresql;Port=5432;Database=postgres;Username=postgres;Password=hb0i97olKO"
   podLabels:
     DataClass: "Medium"
+  podAnnotations:
+    datree.skip/CUSTOM_REPLICA_COUNT_PROD: skip for default helm.
