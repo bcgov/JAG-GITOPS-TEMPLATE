@@ -3,7 +3,6 @@ kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
   name: {{ "{{" }} include "chart.fullname" . {{ "}}" }}-api-egress
-  namespace: {{ "{{" }} include "common.names.namespace" . | quote {{ "}}" }}
   labels:
     {{ "{{" }}- include "react-baseapp.labels" . | nindent 4 {{ "}}" }}
   annotations: 

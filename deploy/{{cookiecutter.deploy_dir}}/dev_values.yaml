@@ -273,7 +273,7 @@ postgresql-ha:
     owner: "test-team"
     project: "abcd"
     DataClass: "Medium"
-    app.kubernetes.io/part-of: test-project
+    app.kubernetes.io/part-of: "{{cookiecutter.project_name}}"
 
 telnet:
   enabled: true
