@@ -212,9 +212,16 @@ jobs:
                 }'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Repository Dispatch
+      #   uses: peter-evans/repository-dispatch@v3
+      #   with:
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      #     repository: bcgov-c/ministry-gitops-jag
+      #     event-type: rbac_setup
+      #     client-payload: '{"licence_plate": "${{ github.event.client_payload.licence_plate || github.event.inputs.licence_plate }}"}'
 
-  trigger-rbac:
-    needs: [setup-dispatch] 
-    uses: bcgov-c/ministry-gitops-jag/.github/workflows/default-rbac.yml@template
-    with:
-      licence_plate: ${{ github.event.client_payload.licence_plate || github.event.inputs.licence_plate }}
+  # trigger-rbac:
+  #   needs: [setup-dispatch] 
+  #   uses: bcgov-c/ministry-gitops-jag/.github/workflows/default-rbac.yml@template
+  #   with:
+  #     licence_plate: ${{ github.event.client_payload.licence_plate || github.event.inputs.licence_plate }}
